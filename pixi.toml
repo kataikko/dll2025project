@@ -1,0 +1,12 @@
+[workspace]
+authors = ["Vincent Kataikko <vincent@kataikko.de>"]
+channels = ["conda-forge"]
+name = "Project"
+platforms = ["osx-arm64"]
+version = "0.1.0"
+
+[tasks]
+
+[dependencies]
+numpy = ">=2.3.0,<3"
+ipykernel = ">=6.29.5,<7"
