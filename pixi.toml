@@ -1,12 +1,42 @@
 [workspace]
 authors = ["Vincent Kataikko <vincent@kataikko.de>"]
-channels = ["conda-forge"]
+channels = ["pytorch", "conda-forge"]
 name = "Project"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
 
-[dependencies]
+[feature.ranking.dependencies]
 numpy = ">=2.3.0,<3"
 ipykernel = ">=6.29.5,<7"
+
+[feature.base.dependencies]
+pytorch = "==2.0.0"
+torchvision = "==0.15.2"
+torchaudio = "==2.0.2"
+python = "3.8.*"
+setuptools = ">=75.3.0,<76"
+
+[feature.cpu.pypi-options]
+index-url = "https://pypi.org/simple"
+find-links = [{ url = "https://data.pyg.org/whl/torch-2.0.0+cpu.html" }]
+no-build-isolation = ["pytorch3d", "torch-cluster"]
+
+[feature.cpu.pypi-dependencies]
+torch-cluster = "*"
+pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
+
+[feature.cu117.pypi-options]
+index-url = "https://pypi.org/simple"
+find-links = [{ url = "https://data.pyg.org/whl/torch-2.0.1+cu117.html" }]
+no-build-isolation = ["pytorch3d", "torch-cluster"]
+
+[feature.cu117.pypi-dependencies]
+torch-cluster = "*"
+pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
+
+[environments]
+ranking = ["ranking"]
+mac = ["base", "cpu"]
+cluster = ["base", "cu117"]
