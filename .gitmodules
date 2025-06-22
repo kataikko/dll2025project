@@ -1,0 +1,3 @@
+[submodule "common3d"]
+	path = common3d
+	url = git@github.com:kataikko/common3d.git
