@@ -1,12 +1,44 @@
 [workspace]
 authors = ["Vincent Kataikko <vincent@kataikko.de>"]
-channels = ["conda-forge"]
+channels = ["pytorch", "pytorch3d", "conda-forge", "pyg"]
 name = "Project"
-platforms = ["osx-arm64"]
+platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
 
-[dependencies]
+## Env for running ranking notebook
+[feature.ranking.dependencies]
 numpy = ">=2.3.0,<3"
 ipykernel = ">=6.29.5,<7"
+
+## 
+[target.osx-arm64.activation.env]
+MACOSX_DEPLOYMENT_TARGET = "10.14"
+CC = "clang"
+CXX = "clang++"
+
+[feature.base.dependencies]
+python = ">=3.11.9,<3.14"
+pytorch-cluster = ">=1.6.3,<2"
+iopath = ">=0.1.10,<0.2"
+setuptools = ">=80.9.0,<81"
+numpy = ">=2.3.0,<3"
+ninja = ">=1.13.0,<2"
+
+[feature.base.pypi-options]
+index-url = "https://pypi.org/simple"
+no-build-isolation = ["pytorch3d"]
+
+[feature.base.pypi-dependencies]
+torch = "==2.4.1"
+torchvision = ">=0.19.1, <0.20"
+pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
+
+[feature.cuda.target.linux-64.dependencies]
+cuda = ">=12.4.1,<13"
+
+[environments]
+ranking = ["ranking"]
+mac = ["base"]
+cluster = ["base", "cuda"]
