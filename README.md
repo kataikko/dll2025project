@@ -10,3 +10,19 @@ To enter the environment for Macs, use:
 pixi shell -e mac
 ```
 This builds the environment in this directory under `.pixi`.
+
+### Linux (TODO)
+
+To enter the environment for Linux platforms, use:
+```
+pixi shell -e linux
+```
+This builds the environment in this directory under `.pixi`.
+
+### Cluster (TODO)
+
+To enter the environment for use on the cluster, use:
+```
+pixi shell -e cluster
+```
+This builds the environment in this directory under `.pixi`.
