@@ -19,6 +19,7 @@ CC = "clang"
 CXX = "clang++"
 
 [target.linux-64.activation.env]
+FORCE_CUDA = "1"
 
 [feature.base.dependencies]
 python = ">=3.11.9,<3.14"
