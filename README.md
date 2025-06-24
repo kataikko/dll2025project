@@ -11,7 +11,7 @@ pixi shell -e cpu
 ```
 This builds the environment in this directory under `.pixi`.
 
-### Linux with CUDA avaiable (TODO)
+### Linux with CUDA avaiable
 
 To enter the environment for Linux platforms, use:
 ```
@@ -19,7 +19,7 @@ pixi shell -e cuda
 ```
 This builds the environment in this directory under `.pixi`.
 
-### Linux with only CPU avaiable (TODO)
+### Linux with only CPU avaiable
 
 To enter the environment for Linux platforms, use:
 ```
@@ -27,7 +27,7 @@ pixi shell -e cpu
 ```
 This builds the environment in this directory under `.pixi`.
 
-### Cluster (TODO)
+### Cluster
 
 To enter the environment for use on the cluster, use:
 ```
