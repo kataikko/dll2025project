@@ -18,7 +18,7 @@ MACOSX_DEPLOYMENT_TARGET = "10.14"
 CC = "clang"
 CXX = "clang++"
 
-[target.linux-64.activation.env]
+[feature.cuda.activation.env]
 FORCE_CUDA = "1"
 
 [feature.base.dependencies]
@@ -33,9 +33,15 @@ ninja = ">=1.13.0,<2"
 index-url = "https://pypi.org/simple"
 no-build-isolation = ["pytorch3d"]
 
-[feature.base.pypi-dependencies]
+[feature.cuda.target.linux-64.pypi-dependencies]
 torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cu124"}
 torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cu124"}
+
+[feature.cpu.pypi-dependencies]
+torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cpu"}
+torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cpu"}
+
+[feature.base.pypi-dependencies]
 pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
 
 [feature.cuda.target.linux-64.dependencies]
@@ -43,5 +49,6 @@ cuda = "==12.4.1"
 
 [environments]
 ranking = ["ranking"]
-mac = ["base"]
 cluster = ["base", "cuda"]
+cuda = ["base", "cuda"]
+cpu = ["base", "cpu"]

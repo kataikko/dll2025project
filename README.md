@@ -7,15 +7,23 @@ Project directory for the Deep Learning Lab
 
 To enter the environment for Macs, use:
 ```
-pixi shell -e mac
+pixi shell -e cpu
 ```
 This builds the environment in this directory under `.pixi`.
 
-### Linux (TODO)
+### Linux with CUDA avaiable (TODO)
 
 To enter the environment for Linux platforms, use:
 ```
-pixi shell -e linux
+pixi shell -e cuda
+```
+This builds the environment in this directory under `.pixi`.
+
+### Linux with only CPU avaiable (TODO)
+
+To enter the environment for Linux platforms, use:
+```
+pixi shell -e cpu
 ```
 This builds the environment in this directory under `.pixi`.
 
