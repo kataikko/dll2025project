@@ -22,27 +22,28 @@ CXX = "clang++"
 FORCE_CUDA = "1"
 
 [feature.base.dependencies]
-python = ">=3.11.9,<3.14"
 pytorch-cluster = ">=1.6.3,<2"
 iopath = ">=0.1.10,<0.2"
 setuptools = ">=80.9.0,<81"
-numpy = ">=2.3.0,<3"
 ninja = ">=1.13.0,<2"
+python = "==3.10"
+numpy = ">=2.2.6,<3"
 
 [feature.base.pypi-options]
 index-url = "https://pypi.org/simple"
 no-build-isolation = ["pytorch3d"]
 
+[feature.base.pypi-dependencies]
+pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
+
 [feature.cuda.target.linux-64.pypi-dependencies]
 torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cu124"}
 torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cu124"}
+od3d = { path = "./common3d"}
 
 [feature.cpu.pypi-dependencies]
 torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cpu"}
 torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cpu"}
-
-[feature.base.pypi-dependencies]
-pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
 
 [feature.cuda.target.linux-64.dependencies]
 cuda = "==12.4.1"
