@@ -21,7 +21,7 @@ CXX = "clang++"
 [feature.cuda.activation.env]
 FORCE_CUDA = "1"
 TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
-CUDA_HOME="/misc/software/cuda/cuda-12.4"
+CUDA_HOME="/usr/local/cuda-12.4"
 PATH="${CUDA_HOME}/bin:${PATH}"
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${CUDA_HOME}/lib64"
 
@@ -49,11 +49,14 @@ od3d = { path = "./common3d"}
 torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cpu"}
 torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cpu"}
 
+[feature.cluster.dependencies]
+zellij = "*"
+
 [feature.cuda.target.linux-64.dependencies]
 cuda = "==12.4.1"
 
 [environments]
 ranking = ["ranking"]
-cluster = ["base", "cuda"]
+cluster = ["cluster"]
 cuda = ["base", "cuda"]
 cpu = ["base", "cpu"]

@@ -34,3 +34,5 @@ To enter the environment for use on the cluster, use:
 pixi shell -e cluster
 ```
 This builds the environment in this directory under `.pixi`.
+For now, this environment only includes `zellij` from which you can use `srun` for an interactive shell.
+Then, you can enter the `cuda` environment.
