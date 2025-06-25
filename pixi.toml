@@ -20,6 +20,10 @@ CXX = "clang++"
 
 [feature.cuda.activation.env]
 FORCE_CUDA = "1"
+TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
+CUDA_HOME="/misc/software/cuda/cuda-12.4"
+PATH="${CUDA_HOME}/bin:${PATH}"
+LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${CUDA_HOME}/lib64"
 
 [feature.base.dependencies]
 pytorch-cluster = ">=1.6.3,<2"
