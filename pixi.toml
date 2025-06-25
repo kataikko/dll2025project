@@ -55,8 +55,11 @@ zellij = "*"
 [feature.cuda.target.linux-64.dependencies]
 cuda = "==12.4.1"
 
+[feature.cuda.dependencies]
+libxcrypt = ">=4.4.36,<5"
+
 [environments]
 ranking = ["ranking"]
-cluster = ["cluster"]
+cluster = ["base", "cuda", "cluster"]
 cuda = ["base", "cuda"]
 cpu = ["base", "cpu"]
