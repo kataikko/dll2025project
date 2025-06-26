@@ -275,9 +275,9 @@ class OD3D_Objects3D(abc.ABC, nn.Module):
                     requires_grad=feats_requires_grad,
                 )  # F,
             else:
-                self._feat_clutter = torch.zeros(self.feat_dim, **factory_kwargs)  # F,
+                self.register_parameter("_feat_clutter", None)  # None
         else:
-            self.register_parameter("_feat_clutter", None)  # None
+            self._feat_clutter = torch.zeros(self.feat_dim, **factory_kwargs)  # F,
 
         if instance_deform_net_config is not None:
             self.instance_deform_net = self.instance_deform_class.get_model(

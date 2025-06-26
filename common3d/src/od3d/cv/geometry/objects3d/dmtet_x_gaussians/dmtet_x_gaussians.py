@@ -67,6 +67,7 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
         tet_res=16,
         sdf_symmetric=True,
         harmonic_functions_count=8,
+        init_radius=1.0,
         **kwargs,
     ):
         super().__init__(
@@ -108,7 +109,7 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
             gs_rotation_requires_grad=gs_rotation_requires_grad,
         )
 
-        self.init_radius = 1.0
+        self.init_radius = init_radius
         self.mesh_update_jitter_scale = 0.05
 
         self.marching_tets = DMTet_Core()
