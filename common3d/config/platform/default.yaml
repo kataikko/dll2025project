@@ -2,7 +2,7 @@
 link: local
 path_home: /ihome/kataikkv
 path_logs: /ihome/kataikkv
-path_od3d: /work/dlclarge2/kataikkv-labrats/dll2025project/common3d
+path_od3d: /work/dlclarge2/kataikkv-labrats/dll2025project/common3d/src/od3d
 path_datasets_raw: /work/dlclarge1/sommerl-od3d/datasets # sshfs maythux@192.168.xx.xx:/home/maythuxServ/Mounted ~/remoteDir
 path_datasets_preprocess: /work/dlclarge1/sommerl-od3d/datasets # for student: /misc/student/srinivap/datasets_preprocess
 path_exps: /work/dlclarge2/kataikkv-labrats/dll2025project/experiments
