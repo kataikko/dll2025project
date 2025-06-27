@@ -43,7 +43,7 @@ pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
 [feature.cuda.target.linux-64.pypi-dependencies]
 torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cu124"}
 torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cu124"}
-od3d = { path = "./common3d"}
+od3d = { path = "./common3d", editable = true }
 
 [feature.cpu.pypi-dependencies]
 torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cpu"}

@@ -5538,6 +5538,7 @@ packages:
   - nvdiffrast @ git+https://github.com/NVlabs/nvdiffrast ; extra == 'od3d-nvdiffrast'
   - diff-gaussian-rasterization ; extra == 'diff-gauss-mip-splat'
   requires_python: '>=3.7'
+  editable: true
 - pypi: https://files.pythonhosted.org/packages/e3/94/1843518e420fa3ed6919835845df698c7e27e183cb997394e4a670973a65/omegaconf-2.3.0-py3-none-any.whl
   name: omegaconf
   version: 2.3.0
