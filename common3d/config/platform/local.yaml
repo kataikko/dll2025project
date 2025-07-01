@@ -8,4 +8,5 @@ path_datasets_preprocess: /work/dlclarge1/sommerl-od3d/datasets # for student: /
 path_exps: /work/dlclarge2/kataikkv-labrats/dll2025project/experiments
 path_cuda: /usr/local/cuda-12.4
 url_od3d: git@github.com:GenIntel/common3d.git
-renderer: open3d
+install_od3d: False
+renderer: pytorch3d
