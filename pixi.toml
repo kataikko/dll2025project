@@ -18,12 +18,12 @@ ipykernel = ">=6.29.5,<7"
 
 ## project env for usage on kislurm cluster
 [feature.project.system-requirements]
-cuda = "12.6"
+cuda = "12.4"
 
 [feature.project.activation.env]
 FORCE_CUDA = "1"
 TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
-CUDA_HOME="/usr/local/cuda-12.6"
+CUDA_HOME="/usr/local/cuda-12.4"
 PATH="${CUDA_HOME}/bin:${PATH}"
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${CUDA_HOME}/lib64"
 CPATH="${PIXI_PROJECT_ROOT}/.pixi/envs/${PIXI_ENVIRONMENT_NAME}/include"
@@ -39,12 +39,13 @@ pytorch3d = ">=0.7.7,<0.8"
 
 [feature.project.pypi-options]
 index-url = "https://pypi.org/simple"
-extra-index-urls = ["https://download.pytorch.org/whl/cu126"]
-find-links = [{url = "https://data.pyg.org/whl/torch-2.7.0+cu126.html"}]
+extra-index-urls = ["https://download.pytorch.org/whl/cu124"]
+find-links = [{ url = "https://data.pyg.org/whl/torch-2.6.0+cu124.html" }, { url =  "https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.5.1_cu124.html"}]
 
 [feature.project.target.linux-64.pypi-dependencies]
 torch-cluster = {version = ">=1.6.3,<2"}
-torch = {version = ">=2.7.0"}
+# kaolin = {version = "==0.17.0"}
+torch = {version = ">=2.6.0"}
 torchvision = {version = ">=0.21.0"}
 od3d = { path = "./common3d", editable = true }
 

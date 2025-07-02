@@ -2,11 +2,11 @@ link: local
 path_home: /home/kataikkv
 path_logs: /home/kataikkv
 path_od3d: /work/dlclarge2/kataikkv-labrats/dll2025project/common3d/src/od3d
-#path_exps: /scratch/sommerl/exps
+# path_exps: /scratch/sommerl/exps
 path_datasets_raw: /work/dlclarge1/sommerl-od3d/datasets # sshfs maythux@192.168.xx.xx:/home/maythuxServ/Mounted ~/remoteDir
 path_datasets_preprocess: /work/dlclarge1/sommerl-od3d/datasets # for student: /misc/student/srinivap/datasets_preprocess
 path_exps: /work/dlclarge2/kataikkv-labrats/dll2025project/experiments
-path_cuda: /usr/local/cuda-12.6
+path_cuda: /usr/local/cuda-12.4
 url_od3d: git@github.com:GenIntel/common3d.git
 
 install_od3d: False

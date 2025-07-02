@@ -7,9 +7,10 @@ environments:
     - url: https://conda.anaconda.org/nvidia/
     indexes:
     - https://pypi.org/simple
-    - https://download.pytorch.org/whl/cu126
+    - https://download.pytorch.org/whl/cu124
     find-links:
-    - url: https://data.pyg.org/whl/torch-2.7.0+cu126.html
+    - url: https://data.pyg.org/whl/torch-2.6.0+cu124.html
+    - url: https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.5.1_cu124.html
     packages:
       linux-64:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-3_kmp_llvm.conda
@@ -328,9 +329,10 @@ environments:
     - url: https://conda.anaconda.org/nvidia/
     indexes:
     - https://pypi.org/simple
-    - https://download.pytorch.org/whl/cu126
+    - https://download.pytorch.org/whl/cu124
     find-links:
-    - url: https://data.pyg.org/whl/torch-2.7.0+cu126.html
+    - url: https://data.pyg.org/whl/torch-2.6.0+cu124.html
+    - url: https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.5.1_cu124.html
     packages:
       linux-64:
       - conda: https://conda.anaconda.org/conda-forge/linux-64/_openmp_mutex-4.5-3_kmp_llvm.conda
