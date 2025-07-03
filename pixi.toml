@@ -1,65 +1,63 @@
 [workspace]
 authors = ["Vincent Kataikko <vincent@kataikko.de>"]
-channels = ["pytorch", "pytorch3d", "conda-forge", "pyg"]
-name = "Project"
+channels = ["conda-forge", "pyg", "nvidia"]
+name = "Deep Learning Lab Project"
 platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
 [tasks]
+baseline = [{ task = "co3d" }, { task = "shapenet" }]
+
+[tasks.co3d]
+cmd = "od3d bench run -b co3d_nemo_rec -p local -l 0"
+cwd = "common3d"
+
+[tasks.shapenet]
+cmd = "od3d bench run -b shapenet_nemo_rec -p local -l 0"
+cwd = "common3d"
 
 ## Env for running ranking notebook
 [feature.ranking.dependencies]
 numpy = ">=2.3.0,<3"
 ipykernel = ">=6.29.5,<7"
 
-## 
-[target.osx-arm64.activation.env]
-MACOSX_DEPLOYMENT_TARGET = "10.14"
-CC = "clang"
-CXX = "clang++"
+## project env for usage on kislurm cluster
+[feature.project.system-requirements]
+cuda = "12.4"
 
-[feature.cuda.activation.env]
+[feature.project.activation.env]
 FORCE_CUDA = "1"
 TORCH_CUDA_ARCH_LIST="5.0;6.0;6.1;7.0;7.5;8.0;8.6+PTX"
 CUDA_HOME="/usr/local/cuda-12.4"
 PATH="${CUDA_HOME}/bin:${PATH}"
 LD_LIBRARY_PATH="${LD_LIBRARY_PATH}:${CUDA_HOME}/lib64"
+CPATH="${PIXI_PROJECT_ROOT}/.pixi/envs/${PIXI_ENVIRONMENT_NAME}/include"
 
-[feature.base.dependencies]
-pytorch-cluster = ">=1.6.3,<2"
+[feature.project.target.linux-64.dependencies]
 iopath = ">=0.1.10,<0.2"
 setuptools = ">=80.9.0,<81"
 ninja = ">=1.13.0,<2"
 python = "==3.10"
 numpy = ">=2.2.6,<3"
+libxcrypt = ">=4.4.36,<5"
+pytorch3d = ">=0.7.7,<0.8"
 
-[feature.base.pypi-options]
+[feature.project.pypi-options]
 index-url = "https://pypi.org/simple"
-no-build-isolation = ["pytorch3d"]
+extra-index-urls = ["https://download.pytorch.org/whl/cu124"]
+find-links = [{ url = "https://data.pyg.org/whl/torch-2.6.0+cu124.html" }, { url =  "https://nvidia-kaolin.s3.us-east-2.amazonaws.com/torch-2.5.1_cu124.html"}]
 
-[feature.base.pypi-dependencies]
-pytorch3d = { git = "https://github.com/facebookresearch/pytorch3d.git" }
-
-[feature.cuda.target.linux-64.pypi-dependencies]
-torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cu124"}
-torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cu124"}
+[feature.project.target.linux-64.pypi-dependencies]
+torch-cluster = {version = ">=1.6.3,<2"}
+# kaolin = {version = "==0.17.0"}
+torch = {version = ">=2.6.0"}
+torchvision = {version = ">=0.21.0"}
 od3d = { path = "./common3d", editable = true }
-
-[feature.cpu.pypi-dependencies]
-torch = {version = "==2.4.1", index = "https://download.pytorch.org/whl/cpu"}
-torchvision = {version = ">=0.19.1, <0.20", index = "https://download.pytorch.org/whl/cpu"}
 
 [feature.cluster.dependencies]
 zellij = "*"
 
-[feature.cuda.target.linux-64.dependencies]
-cuda = "==12.4.1"
-
-[feature.cuda.dependencies]
-libxcrypt = ">=4.4.36,<5"
-
 [environments]
 ranking = ["ranking"]
-cluster = ["base", "cuda", "cluster"]
-cuda = ["base", "cuda"]
-cpu = ["base", "cpu"]
+cluster = ["project", "cluster"]
+cuda = ["project"]
