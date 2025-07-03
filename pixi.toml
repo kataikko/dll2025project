@@ -5,11 +5,16 @@ name = "Deep Learning Lab Project"
 platforms = ["osx-arm64", "linux-64"]
 version = "0.1.0"
 
+[tasks]
+baseline = [{ task = "co3d" }, { task = "shapenet" }]
+
 [tasks.co3d]
 cmd = "od3d bench run -b co3d_nemo_rec -p local -l 0"
+cwd = "common3d"
 
 [tasks.shapenet]
 cmd = "od3d bench run -b shapenet_nemo_rec -p local -l 0"
+cwd = "common3d"
 
 ## Env for running ranking notebook
 [feature.ranking.dependencies]
