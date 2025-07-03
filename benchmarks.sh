@@ -1,4 +1,5 @@
-#!/bin/sh
-pixi run --environment cluster co3d
+#!/bin/bash
+cd ./common3d 
 
+pixi run --environment cluster co3d
 pixi run --environment cluster shapenet
