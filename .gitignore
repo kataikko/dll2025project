@@ -200,6 +200,3 @@ cython_debug/
 # wandb config & log files
 wandb/
 slurm-*
-
-# local config
-common3d/config/platform/local.yaml
