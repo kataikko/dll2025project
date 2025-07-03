@@ -13,3 +13,4 @@ install_od3d: False
 partition: dllabdlc_gpu-rtx2080
 
 renderer: pytorch3d
+
