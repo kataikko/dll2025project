@@ -21,3 +21,11 @@
 	- multiple backbones available  in `common3d/src/od3d/models/backbones/`
 - head (decoder)
 	- `common3d/src/od3d/models/heads/head.py`
+- `common3d/src/od3d/models/model.py` (OD3D_Model)
+	- contains the backbone and the head
+
+## Code entry points
+- forward pass through the OD3D_Model: https://github.com/kataikko/dll2025project/blob/edacb33cf11aa85426b43b4d309ca4db167fc1e2/common3d/src/od3d/methods/nemo/method.py#L1067C1-L1067C21
+## Notes
+- A flexicubes implementation already exists here: [common3d/src/od3d/cv/geometry/objects3d/flexicubes/flexicubes.py](https://github.com/kataikko/dll2025project/blob/edacb33cf11aa85426b43b4d309ca4db167fc1e2/common3d/src/od3d/cv/geometry/objects3d/flexicubes/flexicubes.py#L391)
+- https://github.com/kataikko/dll2025project/blob/edacb33cf11aa85426b43b4d309ca4db167fc1e2/common3d/src/od3d/methods/nemo/method.py#L106
