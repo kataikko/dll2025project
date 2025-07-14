@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "Overview.md",
+                "file": "FlexiCubes.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "Overview"
+              "title": "FlexiCubes"
             }
           }
         ]
@@ -179,10 +179,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "5b3943ece6acb213",
+  "active": "7e16f94015016c86",
   "lastOpenFiles": [
-    "Roadmap.md",
+    "resources",
+    "Untitled.md",
+    "FlexiCubes.md",
+    "resources/dual-contouring.png",
+    "resources/mc-dc-dmc-vizualization.png",
     "Overview.md",
+    "Roadmap.md",
     "Welcome.md"
   ]
 }
