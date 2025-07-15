@@ -11,10 +11,14 @@
             "id": "b57e0e082a9a4a07",
             "type": "leaf",
             "state": {
-              "type": "empty",
-              "state": {},
+              "type": "markdown",
+              "state": {
+                "file": "Roadmap.md",
+                "mode": "source",
+                "source": false
+              },
               "icon": "lucide-file",
-              "title": "New tab"
+              "title": "Roadmap"
             }
           }
         ]
@@ -175,10 +179,10 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "3a6efd3837bc410d",
+  "active": "b57e0e082a9a4a07",
   "lastOpenFiles": [
-    "Roadmap.md",
     "Overview.md",
+    "Roadmap.md",
     "FlexiCubes.md",
     "resources",
     "Untitled.md",
