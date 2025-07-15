@@ -26,7 +26,7 @@
 	- contains the backbone and the head
 - `common3d/src/od3d/cv/geometry/objects3d/objects3d.py` (OD3D_Objects3D)
 	- differentiable mesh representation (gets infered from an SDF?)
-- fn `update_dmet_gaussians` to render a mesh from the sdf
+- fn `update_dmtet_gaussians` to render a mesh from the sdf
 
 ## Code entry points
 - forward pass through the OD3D_Model: https://github.com/kataikko/dll2025project/blob/edacb33cf11aa85426b43b4d309ca4db167fc1e2/common3d/src/od3d/methods/nemo/method.py#L1067C1-L1067C21
