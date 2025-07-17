@@ -4,21 +4,19 @@
     "type": "split",
     "children": [
       {
-        "id": "a68bdd7c9b83b506",
+        "id": "8736229cc7fd5914",
         "type": "tabs",
         "children": [
           {
-            "id": "b57e0e082a9a4a07",
+            "id": "0a22c75cab6a516e",
             "type": "leaf",
             "state": {
-              "type": "markdown",
+              "type": "image",
               "state": {
-                "file": "FlexiCubes.md",
-                "mode": "source",
-                "source": false
+                "file": "resources/mc-dc-dmc-vizualization.png"
               },
-              "icon": "lucide-file",
-              "title": "FlexiCubes"
+              "icon": "lucide-image",
+              "title": "mc-dc-dmc-vizualization"
             }
           }
         ]
@@ -179,14 +177,15 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "b57e0e082a9a4a07",
+  "active": "7e16f94015016c86",
   "lastOpenFiles": [
+    "presentation/images",
+    "resources/dual-contouring.png",
+    "FlexiCubes.md",
     "Overview.md",
     "Roadmap.md",
-    "FlexiCubes.md",
     "resources",
     "Untitled.md",
-    "resources/dual-contouring.png",
     "resources/mc-dc-dmc-vizualization.png",
     "Welcome.md"
   ]
