@@ -1,6 +1,6 @@
 defaults:
   - logger: wandb
-  - methods@method.nemo: nemo_rec
+  - methods@method.nemo: nemo_rec_flexicubes
   - methods/dataset@method.nemo: co3d
   - datasets@train_datasets.labeled: co3d_no_zsp_1s_labeled_ref # _bic # co3d_no_zsp_50s_aligned
   - datasets@val_datasets.main: co3d_no_zsp_1s_labeled_ref # _bic # co3d_no_zsp_50s_aligned
