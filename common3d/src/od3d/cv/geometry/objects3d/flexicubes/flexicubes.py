@@ -106,3 +106,17 @@ class Flexicubes(Meshes):
 
 
     def update_verts(self, require_grad=True):
+        self.update_dmtet(require_grad=require_grad)  # similar in dmtet_x_gaussians.py
+        pass
+
+    def update_dmtet(
+        self,
+        device=None,
+        dtype=None,
+        require_grad=None,
+        require_feats_grad=None,
+    ):
+        """
+        This should not update the dmtet, as we are in Felxicubes. However, this function is called in nemo/methode
+        """
+        pass

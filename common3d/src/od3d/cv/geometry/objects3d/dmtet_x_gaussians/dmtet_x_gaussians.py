@@ -28,6 +28,9 @@ from omegaconf import DictConfig
 
 
 class DMTet_x_Gaussians(Meshes_x_Gaussians):
+    """
+    never implements a torch forward method, even if it is a subclass of torch.nn.Module.
+    """
     def __init__(
         self,
         verts: List[torch.Tensor],
@@ -205,10 +208,17 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
         self.tets_faces = self.tets_faces.cuda(*args, **kwargs)
 
     def eval(self, *args, **kwargs):
+        """
+        I think this is used like normal torch eval() method, more or less.
+        Maybe not with correct understanding what torch nn.Model.eval() is for.
+        """
         super().eval(*args, **kwargs)
         self.update_dmtet(require_grad=False)
 
     def update_verts(self, require_grad=True):
+        """
+        Is called at `update_and_render_with_batch_and_imgs_feats` in `od3d/cv/geometry/objects3d/objects3d.py`
+        """
         self.update_dmtet(require_grad=require_grad)
         # pass
 
@@ -219,6 +229,9 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
         require_grad=None,
         require_feats_grad=None,
     ):
+        """
+        This might be a replacement for an "forward" method in a torch.nn.Module.
+        """
         if require_grad is None:
             require_grad = self.verts_requires_grad
         if require_feats_grad is None:

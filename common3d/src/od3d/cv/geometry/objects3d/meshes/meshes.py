@@ -237,6 +237,9 @@ class OD3D_Meshes_Deform(OD3D_Objects3D_Deform):
 
 
 class Meshes(OD3D_Objects3D):
+    """
+    OD3D_Objects3D is as subclass of nn.Module. It does not implement a forward method.
+    """
     instance_deform_class = OD3D_Meshes_Deform
     feats_objects: Optional[torch.Tensor]
     verts_uvs: Optional[torch.Tensor]
