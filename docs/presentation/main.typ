@@ -2,105 +2,292 @@
 #import "themes/UFR.typ": *
 #import "@preview/numbly:0.1.0": numbly
 #import "@preview/muchpdf:0.1.1": muchpdf
+#import "@preview/cetz:0.4.0"
 
 #show: metropolis-theme.with(
   aspect-ratio: "16-9",
-  footer: self => self.info.institution
+  footer: self => self.info.institution,
+  config-info(
+    title: [Flexicubes],
+    subtitle: [Flexible Isosurface Extraction for Gradient-Based Mesh Optimization],
+    author: [Julius Schmitt],
+    date: [17.07.2025],
+    institution: [Seminar Deep Learning Lab at the Albert Ludwigs University Freiburg],
+  ),
 )
 
 #pdfpc.config(
-  duration-minutes: 30,
+  duration-minutes: 15,
   start-time: datetime(hour: 10, minute: 5, second: 0),
-  last-minutes: 5,
+  last-minutes: 2,
   note-font-size: 12,
   disable-markdown: false,
-
 )
 
 #set heading(numbering: numbly("{1}.", default: "1.1"))
 
 #let note = pdfpc.speaker-note
-#let vizfig(content) = {
+
+#let vizfig(content, caption: auto) = {
   figure(
       content,
-      caption: text(size: 15pt)[Illustration by Müller et. al.],
-      supplement: [Architecture],
+      caption: caption,
+      supplement: [Figure],
       numbering: none,
   )
 }
-#let pdf(path, scale: 2.0) = {
-  muchpdf(scale: scale, read(path, encoding: none))
-}
 
-= Precursor Methods
-== Isosurfacing
-The goal of these methods, called isosurfacing algorithms, is to create a triangle mesh from a 3D grid of scalar values, such as a Signed Distance Function (SDF).
+#let marching_cubes_viz = cetz.canvas({
+  import cetz.draw: *
 
-#image("../resources/mc-dc-dmc-vizualization.png")
-== Marching Cubes (MC)
+  // Draw the square
+  let a = (0, 2);
+  let b = (2, 2);
+  let c = (2, 0);
+  let d = (0, 0);
+  line(a, b, c, d, a);
 
-Marching Cubes is a classic algorithm that processes the 3D grid one cube at a time
+  // Grid points
+  circle(a, radius: 1.5pt);
+  circle(b, radius: 1.5pt);
+  circle(c, radius: 1.5pt);
+  circle(d, radius: 1.5pt);
 
-- **Process**:
-    1. For a single cube in the grid, it checks the scalar value at each of its 8 corners to see if it's inside or outside the surface (e.g., negative or positive SDF value).
-    2. This 8-corner on/off pattern creates one of 256 possible configurations. This configuration is used as an index into a pre-computed look-up table.
-    3. The table specifies which edges of the cube the surface intersects. For each intersected edge, the exact vertex position is calculated using linear interpolation between the two corner values.
-    4. The table also dictates how to connect these new vertices to form one or more triangles inside the cube3.
+  // Surface intersection points
+  let p1 = (1, 2);
+  let p2 = (2, 1);
+  circle(p1, radius: 2pt, fill: red);
+  circle(p2, radius: 2pt, fill: red);
 
-- **Limitation**: The generated mesh vertices can **only lie on the edges of the grid**. This lack of freedom means MC struggles to represent sharp features that aren't aligned with the grid axes, often creating "stair-step" artifacts.
+  // The generated line segment
+  line(p1, p2, stroke: red);
 
+  content(p1, anchor: "south", dy: 0.1, text(10pt, "Vertex on edge"));
+})
 
-== Dual Contouring (DC)
+#let dual_contouring_viz = cetz.canvas({
+  import cetz.draw: *
 
-Dual Contouring was created to address the rigidity of MC and better capture sharp features.
-#image("../resources/../resources/mc-dc-dmc-vizualization.png")
-- **Process**:
-    1. Like MC, it identifies where the surface intersects the edges of each cube.
-    2. However, instead of placing vertices on the edges, it generates a **single vertex somewhere inside the cube**.
-    3. To find the optimal position for this internal "dual" vertex, DC minimizes a **Quadratic Error Function (QEF)**. The QEF tries to find a single point that best respects the tangent planes at all the edge-intersection points. The mesh is then formed by connecting these dual vertices from adjacent cubes.
+  // Draw the square
+  let a = (0, 2);
+  let b = (2, 2);
+  let c = (2, 0);
+  let d = (0, 0);
+  line(a, b, c, d, a);
 
-- **Limitation**: While flexible, the QEF is numerically unstable for gradient-based optimization. If the surface is relatively flat within a cube, the gradients are co-planar, and the QEF solution can "explode," placing the vertex far outside its cell. This causes self-intersections and makes optimization fail. The method can also produce non-manifold geometry.
+  // Grid points
+  circle(a, radius: 1.5pt);
+  circle(b, radius: 1.5pt);
+  circle(c, radius: 1.5pt);
+  circle(d, radius: 1.5pt);
 
+  // Dual vertex inside the cell
+  let dv = (1, 1);
+  circle(dv, radius: 2pt, fill: blue);
 
-== Dual Marching Cubes (DMC)
+  content(dv, anchor: "south", dy: 0.1, text(10pt, "Dual Vertex"));
+})
 
-DMC is a hybrid approach that tries to get the best of both MC and DC12.
+#let flexicubes_vertex_viz = cetz.canvas({
+  import cetz.draw: *
 
-- **Process**: It guarantees a topologically sound (manifold) mesh by using the connectivity from MC's dual graph. Instead of just one vertex per cube, it generates one dual vertex for each polygon that MC would have created. This means a cube can contain multiple, separate vertices if needed.
-- **Limitation**: For positioning these vertices, DMC faces the same dilemma as its predecessors. If it uses a QEF, it inherits the instability of DC. If it uses a simpler method, like placing the vertex at the **centroid** of the MC polygon's vertices, it becomes rigid and loses the ability to capture sharp features.
+  // Draw the square
+  let a = (0, 2);
+  let b = (2, 2);
+  let c = (2, 0);
+  let d = (0, 0);
+  line(a, b, c, d, a);
 
+  // Intersection points
+  let p1 = (1, 2);
+  let p2 = (2, 1);
+  let p3 = (0, 1);
+  circle(p1, radius: 2pt, fill: red);
+  circle(p2, radius: 2pt, fill: red);
+  circle(p3, radius: 2pt, fill: red);
 
----
-== How FLEXICUBES Works
+  // Show flexible positions with alpha
+  line((1, 2), (0.5, 2), mark: "<->");
+  content((0.75, 2), anchor: "south", dy: 0.1, text(10pt, $alpha$));
 
-FLEXICUBES starts with the robust topological foundation of Dual Marching Cubes (DMC) and makes it flexible for optimization by introducing new, learnable parameters. It avoids the unstable QEF entirely.
+  // Final vertex
+  let v = (1, 1);
+  circle(v, radius: 2pt, fill: blue);
 
-The core process involves four main components that are all differentiable and optimized together:
+  // Show beta weights
+  line(p1, v, stroke: (dash: "dashed"));
+  line(p2, v, stroke: (dash: "dashed"));
+  line(p3, v, stroke: (dash: "dashed"));
+  content((1, 1.5), text(10pt, $beta_1$));
+  content((1.5, 1), text(10pt, $beta_2$));
+  content((0.5, 1), text(10pt, $beta_3$));
 
-1. **Flexible Dual Vertex Positioning (The Main Contribution)**: This is how FLEXICUBES gets its flexibility without instability.
+  content(v, anchor: "west", dx: 0.1, text(10pt, "Final Vertex"));
+})
 
-    - It introduces a set of learnable **interpolation weights (α)** for each of the 8 corners in a grid cell. These weights modify the standard linear interpolation formula, allowing the zero-crossing points on the grid edges to shift their positions.
-    - It then introduces a second set of learnable **edge weights (β)** for each of the 12 edges in a grid cell. The final dual vertex is calculated as a **weighted average** of the (now flexible) zero-crossing points, using these `β` weights.
-    - **The key insight** is that this entire process is a series of convex combinations. This mathematically guarantees that the final vertex will always remain inside its local cell, preventing the explosion problem of DC and ensuring stable optimization. These 20 parameters (`8 α + 12 β`) per cell are what the optimizer learns to shape the mesh.
+#let flexicubes_quad_viz = cetz.canvas({
+  import cetz.draw: *
 
-2. **Flexible Quad Splitting**:
+  // A more general quad
+  let q1 = (0, 0);
+  let q2 = (3, 1);
+  let q3 = (2, -2);
+  let q4 = (0, -1);
+  line(q1, q2, q3, q4, q1);
 
-    - DMC produces quadrilateral faces, which must be triangulated. The choice of which diagonal to split along is a discrete decision that is problematic for gradient descent.
+  // The two diagonals
+  line(q1, q3, stroke: (dash: "dashed"));
+  line(q2, q4, stroke: (dash: "dashed"));
 
-    - FLEXICUBES makes this choice continuous by introducing a learnable **splitting weight (γ)** for each cell.
+  // The midpoints of the diagonals
+  let m1 = (1, -1);
+  let m2 = (1.5, 0);
 
-    - During optimization, each quad is temporarily split into four triangles by adding a central vertex. The position of this vertex is smoothly interpolated between the two diagonal midpoints, controlled by the learned `γ` parameter. This allows the optimizer to favor the triangulation that best reduces the overall loss.
+  // The interpolated center point
+  let center = (1.25, -0.5);
+  circle(center, radius: 2pt, fill: green);
 
-3. **Flexible Grid Deformation**:
+  // Arrow showing the interpolation range
+  line(m1, m2, mark: "<->");
+  content((1.25, -0.2), text(10pt, $gamma$));
 
-    - This is a technique borrowed from prior work. It allows the vertices of the underlying 3D grid to move slightly according to learnable **deformation vectors (δ)**. This helps the grid itself conform to thin or curved parts of the target geometry, adding another layer of flexibility.
+  content(center, anchor: "south", dy: 0.1, text(10pt, "Differentiable Split"));
+})
 
-4. **Regularizers**:
+#title-slide()
 
-    - Because the representation has so many parameters, the paper introduces two regularization terms to encourage good-quality meshes.
+= Introduction: The Challenge of Isosurfacing
 
-    - One term encourages the dual vertex to stay near the center of its primal face, which gives it room to move during optimization.
+#slide(title: "What is Isosurfacing?")[
+  #note(```
+    "Good morning, everyone. Today, I'm going to talk about Flexicubes, a new method for extracting high-quality triangle meshes from 3D scalar fields, like Signed Distance Functions.\n\nThe main goal of any isosurfacing algorithm is to take a 3D grid of values and generate a 3D model that represents the surface where those values are zero."
+  ```)
+  #align(center)[
+    #text(size: 24pt)[
+      Goal: Create a triangle mesh from a 3D grid of scalar values (e.g., a Signed Distance Function).
+    ]
+  ]
+  #v(2em)
+  #vizfig(
+    image("images/mc-dc-dmc-vizualization.png", width: 80%),
+    caption: "From left to right: Marching Cubes, Dual Contouring, and Dual Marching Cubes"
+  )
+]
 
-    - Another penalizes unnecessary sign changes in the SDF to remove spurious internal surfaces.
+== A Quick Recap of Precursor Methods
 
-=focus-slide[Thank you for your attention!]
+#slide(title: "1. Marching Cubes (MC)", composer: (1fr, 1fr))[
+  #note(```
+    "Let's start with the classic: Marching Cubes. It processes the grid cube by cube, looks up the corner configuration in a table, and places vertices on the cube edges.\n\nThe biggest problem with Marching Cubes is its rigidity. Vertices are locked to the grid edges, which creates these blocky, stair-step artifacts, especially on sharp features that don't align with the grid."
+  ```)
+  - *Process*:
+    - Checks 8 corner values of a cube (inside/outside).
+    - Uses a lookup table to determine triangle topology.
+    - Places vertices on cube edges via linear interpolation.
+  - *Limitation*:
+    - Vertices are restricted to grid edges.
+    - Creates "stair-step" artifacts.
+    - Poor at representing sharp, off-axis features.
+][
+  #vizfig(marching_cubes_viz, caption: "Marching Cubes places vertices on the edges of the grid.")
+]
+
+#slide(title: "2. Dual Contouring (DC)", composer: (1fr, 1fr))[
+  #note(```
+    "To fix this, Dual Contouring was introduced. Instead of placing vertices on the edges, it generates a single, more flexible vertex *inside* the cube. It tries to find the optimal position for this vertex by minimizing a Quadratic Error Function, or QEF.\n\nHowever, this flexibility comes at a cost. The QEF is numerically unstable. If the surface inside a cube is flat, the math breaks down, and the vertex can be placed far outside the cube, causing self-intersections and making it useless for gradient-based optimization."
+  ```)
+  - *Process*:
+    - Generates a single vertex *inside* each cube.
+    - Position is optimized by minimizing a Quadratic Error Function (QEF).
+  - *Limitation*:
+    - QEF is numerically unstable, especially on flat surfaces.
+    - Can lead to vertices "exploding" and self-intersections.
+    - Unsuitable for gradient-based optimization.
+][
+  #vizfig(dual_contouring_viz, caption: "Dual Contouring generates a single vertex inside the cell.")
+]
+
+#slide(title: "3. Dual Marching Cubes (DMC)")[
+  #note(```
+    "Dual Marching Cubes is a hybrid. It uses the reliable connectivity of Marching Cubes but allows for more flexible vertex placement like Dual Contouring.\n\nBut it faces the same dilemma. If it uses the unstable QEF, it fails. If it uses a simpler method like placing the vertex at the center of the MC polygon, it becomes rigid again and loses the ability to capture sharp features. This is the problem Flexicubes solves."
+  ```)
+  - *Process*:
+    - Hybrid of MC and DC.
+    - Uses MC's topology for manifold meshes.
+    - Generates one dual vertex per MC polygon.
+  - *Limitation*:
+    - Inherits the same vertex placement dilemma:
+      - QEF -> Unstable
+      - Centroid -> Rigid, loses sharp features.
+]
+
+= Flexicubes: The Best of Both Worlds
+
+#slide(title: "How Flexicubes Works")[
+  #note(```
+    "So, how does Flexicubes achieve both flexibility and stability? It starts with the robust topology of Dual Marching Cubes and introduces new, learnable parameters, completely avoiding the unstable QEF.\n\nThere are four key components that are optimized together."
+  ```)
+  Starts with the robust topology of DMC and introduces learnable parameters to make it flexible for gradient-based optimization, avoiding the unstable QEF.
+
+  #align(center)[
+    *Flexibility + Stability = High-Quality Meshes*
+  ]
+]
+
+== The Four Core Components
+
+#slide(title: "1. Flexible Dual Vertex Positioning", composer: (1fr, 1fr))[
+  #note(```
+    "First, and most importantly, is the flexible vertex positioning. This is the core contribution. Instead of a QEF, Flexicubes uses two sets of learnable weights.\n\nFirst, 'alpha' weights shift the zero-crossing points along the cube edges. Then, 'beta' weights compute the final vertex position as a weighted average of these shifted points.\n\nThe key here is that this is a series of convex combinations. This mathematically guarantees that the vertex stays inside its local cell, preventing the explosion problem of DC and ensuring stable optimization."
+  ```)
+  - *Main Contribution*: Replaces unstable QEF with learnable weights.
+  - *Learnable Weights (α)*: Modify interpolation to shift zero-crossing points on edges.
+  - *Learnable Edge Weights (β)*: Calculate the dual vertex as a weighted average of the flexible zero-crossing points.
+  - *Key Insight*: Convex combinations guarantee the vertex remains within its local cell, ensuring stability.
+][
+  #vizfig(flexicubes_vertex_viz, caption: "Flexicubes uses learnable weights (α, β) for stable vertex positioning.")
+]
+
+#slide(title: "2. Flexible Quad Splitting", composer: (1fr, 1fr))[
+  #note(```
+    "Second, DMC produces quads, which need to be triangulated. Deciding which diagonal to split is a discrete choice, which is bad for gradient descent.\n\nFlexicubes makes this differentiable by introducing a learnable 'gamma' weight. During optimization, it temporarily splits the quad into four triangles and uses the learned gamma parameter to smoothly interpolate towards the better triangulation."
+  ```)
+  - *Problem*: Triangulating quads is a discrete, non-differentiable choice.
+  - *Solution*: Introduces a learnable *splitting weight (γ)*.
+  - *Process*: Temporarily splits each quad into four triangles and uses γ to smoothly choose the optimal triangulation for reducing loss.
+][
+  #vizfig(flexicubes_quad_viz, caption: "Flexicubes uses a learnable weight (γ) for differentiable quad triangulation.")
+]
+
+#slide(title: "3. Flexible Grid Deformation")[
+  #note(```
+    "Third, it uses a technique from prior work to allow the grid itself to deform slightly. Learnable deformation vectors allow the grid points to move, helping the mesh conform to thin or curved parts of the target shape."
+  ```)
+  - Borrows from prior work.
+  - Allows the 3D grid vertices to move via learnable *deformation vectors (δ)*.
+  - Helps the grid conform to thin or curved geometry.
+]
+
+#slide(title: "4. Regularizers")[
+  #note(```
+    "Finally, because this model has so many parameters, it uses two regularizers to encourage good mesh quality. One keeps the dual vertex near the center of its face, and the other penalizes random sign changes in the SDF to prevent internal surfaces."
+  ```)
+  - *Purpose*: Encourage high-quality mesh geometry.
+  - *Two Regularizers*:
+    1. Encourages the dual vertex to stay near the center of its primal face.
+    2. Penalizes spurious sign changes in the SDF to remove internal surfaces.
+]
+
+= Conclusion
+
+#slide(title: "Key Takeaways")[
+  #note(```
+    "In conclusion, Flexicubes presents a novel way to extract isosurfaces that is both flexible enough to capture sharp details and stable enough for gradient-based optimization. It achieves this by replacing the problematic QEF with a set of learnable, convex weights, making it a powerful tool for generating high-quality 3D models.\n\nThank you for your attention."
+  ```)
+  - Flexicubes offers a *stable and flexible* alternative to traditional isosurfacing methods.
+  - It replaces the unstable *QEF* with a set of *learnable, convex weights*.
+  - This allows for *gradient-based optimization* of the mesh geometry.
+  - The result is *high-quality meshes* that can capture sharp features without artifacts or instability.
+]
+
+#focus-slide[Thank you for your attention!]

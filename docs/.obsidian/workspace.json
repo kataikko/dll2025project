@@ -11,12 +11,14 @@
             "id": "0a22c75cab6a516e",
             "type": "leaf",
             "state": {
-              "type": "image",
+              "type": "split-diff-view",
               "state": {
-                "file": "resources/mc-dc-dmc-vizualization.png"
+                "aFile": "docs/presentation/main.typ",
+                "bFile": "docs/presentation/main.typ",
+                "aRef": ""
               },
-              "icon": "lucide-image",
-              "title": "mc-dc-dmc-vizualization"
+              "icon": "diff",
+              "title": "Diff: main.typ"
             }
           }
         ]
@@ -177,16 +179,18 @@
       "obsidian-git:Open Git source control": false
     }
   },
-  "active": "7e16f94015016c86",
+  "active": "0a22c75cab6a516e",
   "lastOpenFiles": [
-    "presentation/images",
-    "resources/dual-contouring.png",
-    "FlexiCubes.md",
+    "presentation/papers/Flexible Isosurface Extraction for Gradient-Based Mesh Optimization.pdf",
+    "presentation/images/mc-dc-dmc-vizualization.png",
     "Overview.md",
     "Roadmap.md",
+    "FlexiCubes.md",
+    "resources/mc-dc-dmc-vizualization.png",
+    "presentation/images",
+    "resources/dual-contouring.png",
     "resources",
     "Untitled.md",
-    "resources/mc-dc-dmc-vizualization.png",
     "Welcome.md"
   ]
 }
