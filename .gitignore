@@ -200,3 +200,4 @@ cython_debug/
 # wandb config & log files
 wandb/
 slurm-*
+.obsidian/workspace.json
