@@ -8,3 +8,6 @@
  - 24.07.
    - currently we are only taking care of the update_verts fn. do we need to take of other functions as well?
    - should we consider the non-gradient case?
+   - There are multiple coords MLPs linking to multiple "object ids" in dmtet_x_gaussian. Do we also need multiple CoordMLPs?
+   - In dmtet_x_gaussian a specific get_sdf_gradient is used for gradient calculation. If we do everything in one forward pass, shouldnt torch be able to automatically calculate the gradient?
+   - Could you please explain get_sdf()?
