@@ -56,6 +56,10 @@ pytorch3d = { version = "==0.7.8+pt2.6.0cu124" }
 [feature.cluster.dependencies]
 zellij = "*"
 
+[tool.pixi.feature.dev.dependencies]
+pixi-pycharm = "*"
+
+
 [environments]
 ranking = ["ranking"]
 cluster = ["project", "cluster"]

@@ -395,6 +395,7 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
             sdf (torch.Tensor): BxN
         """
 
+        # sdf init is a scalar?
         sdf_init = pts.detach().norm(dim=-1, keepdim=True) - self.init_radius
         from od3d.data.batch_datatypes import OD3D_ModelData
 
