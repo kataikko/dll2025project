@@ -92,31 +92,109 @@ class Flexicubes(Meshes):
    #         gs_scale_requires_grad=gs_scale_requires_grad,
    #         gs_rotation_requires_grad=gs_rotation_requires_grad,
         )
+        self.sdf_coordmlps = torch.nn.ModuleList()
+        self.feat_coordmlps = torch.nn.ModuleList()
 
+        sdf_coord_mlp_cfg = DictConfig(
+            {
+                "num_layers": 5,
+                "hidden_dim": 256,
+                "out_dim": 1,
+                "dropout": 0,
+                "activation": None,  # None
+                "symmetrize": sdf_symmetric,
+            },
+        )
+
+        feat_coord_mlp_cfg = DictConfig(
+            {
+                "num_layers": 5,
+                "hidden_dim": 256,
+                "out_dim": feat_dim,
+                "dropout": 0,
+                "activation": None,  # feats_activation
+                "symmetrize": False,
+            },
+        )
+
+        # note: import on-the-fly to avoid circular import
+        from od3d.models.heads.coordmlp import CoordMLP
+
+        for m in range(self.meshes_count):
+            # grid_scale = self.get_ranges()[m]
+            # embedder_scalar = 2 * np.pi / grid_scale * 0.9  # originally (-0.5*s, 0.5*s) rescale to (-pi, pi) * 0.9
+            self.sdf_coordmlps.append(
+                CoordMLP(
+                    in_dims=[0],
+                    in_upsample_scales=[],
+                    config=sdf_coord_mlp_cfg,
+                    n_harmonic_functions=harmonic_functions_count,
+                    embed_concat_pts=True,
+                ).to(device, dtype),
+            )
+
+            self.feat_coordmlps.append(
+                CoordMLP(
+                    in_dims=[0],
+                    in_upsample_scales=[],
+                    config=feat_coord_mlp_cfg,
+                    n_harmonic_functions=harmonic_functions_count,
+                    embed_concat_pts=True,
+                ).to(device, dtype),
+            )
         # init Flexicubes
         self.voxel_grid_res = voxel_grid_res
         self.flexicubes = kal.ops.conversions.FlexiCubes(device)
         # create the non-deformed voxel grid whose positions will be used to sample for FlexiCubes
         x_nx3, cube_fx8 = self.flexicubes.construct_voxel_grid(voxel_grid_res)
         x_nx3 *= 2 # scale up the grid so that it's larger than the target object
-        # init mesh-specific weights for Flexicubes
-        self.weight = torch.zeros((cube_fx8.shape[0], 21), dtype=torch.float, device=device)
-        self.weight = torch.nn.Parameter(self.weight.clone().detach(), requires_grad=True)
+        # init mesh-specific weights for Flexicubes - but separate (i.e. betas, alphas, gammas) for better unserstanding
+        self.betas = torch.zeros((cube_fx8.shape[0], 12), dtype=torch.float, device=device)
+        self.betas = torch.nn.Parameter(self.betas.clone().detach(), requires_grad=True)
+
+        self.alphas = torch.zeros((cube_fx8.shape[0], 8), dtype=torch.float, device=device)
+        self.alphas = torch.nn.Parameter(self.alphas.clone().detach(), requires_grad=True)
+
+        self.gammas = torch.zeros((cube_fx8.shape[0], 1), dtype=torch.float, device=device)
+        self.gammas = torch.nn.Parameter(self.gammas.clone().detach(), requires_grad=True)
+
+    def set_verts_requires_grad(self, verts_requires_grad):
+        ## Do we need this? I assume we need at least something like this, so this should be taken as reminder TODO
+        self.verts_requires_grad = verts_requires_grad
+        for param in self.sdf_coordmlps.parameters():
+            param.requires_grad = verts_requires_grad
+
+    def to(self, *args, **kwargs):
+        super().to(*args, **kwargs)
+        self.alphas = self.alphas.to(*args, **kwargs)
+        self.betas = self.betas.to(*args, **kwargs)
+        self.gammas = self.gammas.to(*args, **kwargs)
+
+        # TODO: Need to change Flexicubes device
+
+    def cuda(self, *args, **kwargs):
+        super().cuda(*args, **kwargs)
+        self.alphas.cuda(*args, **kwargs)
+        self.betas.cuda(*args, **kwargs)
+        self.gammas.cuda(*args, **kwargs)
+        
+        # TODO: Need to change Flexicubes device
 
 
+    def eval(self, *args, **kwargs):
+        super().eval(*args, **kwargs)
+        self.update_verts(require_grad=False)
 
     def update_verts(self, require_grad=True):
-        self.update_dmtet(require_grad=require_grad)  # similar in dmtet_x_gaussians.py
-        pass
+        self.update_flexicubes(require_grad=require_grad)  # similar in dmtet_x_gaussians.py
 
-    def update_dmtet(
+    def update_flexicubes(
         self,
         device=None,
         dtype=None,
         require_grad=None,
         require_feats_grad=None,
     ):
-        """
-        This should not update the dmtet, as we are in Felxicubes. However, this function is called in nemo/methode
-        """
+        # Get SDF values
+        
         pass
