@@ -170,7 +170,9 @@ class Flexicubes(Meshes):
         self.betas = self.betas.to(*args, **kwargs)
         self.gammas = self.gammas.to(*args, **kwargs)
 
-        # TODO: Need to change Flexicubes device
+        # TODO: Need to change Flexicubes device.
+        # Maybe we should copy flexicubes code or we initialise Flexicubes anew,
+        # since we have the weights already.
 
     def cuda(self, *args, **kwargs):
         super().cuda(*args, **kwargs)
