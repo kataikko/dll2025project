@@ -6,8 +6,8 @@
 	- Use Flexicubes(Meshes) or Flexicubes(Meshes_Gaussian)? -> Flexicubes(Meshes)
 	- what does nemo mean? -> neural mesh object
  - 24.07.
-   - currently we are only taking care of the update_verts fn. do we need to take of other functions as well?
+   - currently we are only taking care of the update_verts fn. do we need to take of other functions as well? -> to(), eval, ... -> look at dmtet_x_gaussians
    - should we consider the non-gradient case?
-   - There are multiple coords MLPs linking to multiple "object ids" in dmtet_x_gaussian. Do we also need multiple CoordMLPs?
-   - In dmtet_x_gaussian a specific get_sdf_gradient is used for gradient calculation. If we do everything in one forward pass, shouldnt torch be able to automatically calculate the gradient?
-   - Could you please explain get_sdf()?
+   - There are multiple coords MLPs linking to multiple "object ids" in dmtet_x_gaussian. Do we also need multiple CoordMLPs? -> just use 1
+   - In dmtet_x_gaussian a specific get_sdf_gradient is used for gradient calculation. If we do everything in one forward pass, shouldnt torch be able to automatically calculate the gradient? -> we also need the get_sdf_gradient
+   - Could you please explain get_sdf()? -> sphere_sdf + difference_to_sphere
