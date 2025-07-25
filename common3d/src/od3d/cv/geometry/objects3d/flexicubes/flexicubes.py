@@ -173,10 +173,10 @@ class Flexicubes(Meshes):
         self.feat_coordmlps = self.feat_coordmlps.to(*args, **kwargs)
         self.sdf_coordmlps = self.sdf_coordmlps.to(*args, **kwargs)
 
-        # if kwargs["device"]:
-        #     self.create_new_flexicubes(device=kwargs["device"])
-        # else:
-        #     self.create_new_flexicubes(device=args[0])
+        if kwargs["device"]:
+            self.create_new_flexicubes(device=kwargs["device"])
+        else:
+            self.create_new_flexicubes(device=args[0])
 
     def cuda(self, *args, **kwargs):
         super().cuda(*args, **kwargs)
@@ -189,7 +189,7 @@ class Flexicubes(Meshes):
         self.feat_coordmlps = self.feat_coordmlps.cuda(*args, **kwargs)
         self.sdf_coordmlps = self.sdf_coordmlps.cuda(*args, **kwargs)
 
-        # self.create_new_flexicubes(device="cuda")
+        self.create_new_flexicubes(device="cuda")
 
     def eval(self, *args, **kwargs):
         super().eval(*args, **kwargs)
@@ -231,12 +231,12 @@ class Flexicubes(Meshes):
             # Compute Vertices and Faces using flexicubes
             _verts, _faces, v_reg_loss = self.flexicubes(
                 self.x_nx3, 
-                sdf,
+                sdf.view(-1),
                 self.cube_fx8,
                 self.voxel_grid_res,
                 beta=self.betas,
                 alpha=self.alphas,
-                gamma_f=self.gammas,
+                gamma_f=self.gammas.view(-1),
                 training=True
             )
 
