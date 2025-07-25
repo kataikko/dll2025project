@@ -17,6 +17,7 @@ class Flexicubes(Meshes):
         feat_dim=128,
         objects_count=0,
         feats_objects: Union[bool, torch.Tensor] = False,
+        feats_objects_requires_param: bool = True,
         feat_clutter_requires_param: Union[bool, torch.Tensor] = False,
         verts_uvs: List[torch.Tensor] = None,
         verts_coarse_count: int = 150,
@@ -32,7 +33,7 @@ class Flexicubes(Meshes):
         gaussian_splat_opacity=0.7,
         gaussian_splat_pts3d_size_rel_to_neighbor_dist=0.5,
         pt3d_raster_perspective_correct=False,
-        device="cuda",
+        device=None,
         dtype=None,
         rasterizer=RASTERIZER.NVDIFFRAST,
         face_blend_type=FACE_BLEND_TYPE.SOFT_SIGMOID_NORMALIZED,
@@ -44,6 +45,7 @@ class Flexicubes(Meshes):
         voxel_grid_res=16,
         sdf_symmetric=True,
         harmonic_functions_count=8,
+        init_radius=1.0,
         **kwargs,
     ):
         super().__init__(
@@ -51,10 +53,10 @@ class Flexicubes(Meshes):
             faces=faces,
             feat_dim=feat_dim,
             objects_count=objects_count,
-            feats_objects=None,
+            feats_objects=feats_objects,
             verts_uvs=verts_uvs,
             feats_requires_grad=feats_requires_grad,
-            feats_objects_requires_param=False,
+            feats_objects_requires_param=feats_objects_requires_param,
             feat_clutter_requires_param=feat_clutter_requires_param,
             feat_clutter=feat_clutter,
             feats_distribution=feats_distribution,
@@ -79,6 +81,9 @@ class Flexicubes(Meshes):
             face_opacity_face_sdf_gamma=face_opacity_face_sdf_gamma,
             instance_deform_net_config=instance_deform_net_config,
         )
+
+        self.init_radius = init_radius
+
         self.sdf_coordmlps = torch.nn.ModuleList()
         self.feat_coordmlps = torch.nn.ModuleList()
 
@@ -153,22 +158,38 @@ class Flexicubes(Meshes):
         for param in self.sdf_coordmlps.parameters():
             param.requires_grad = verts_requires_grad
 
+    def create_new_flexicubes(self, device):
+        from kaolin.non_commercial import FlexiCubes
+        self.flexicubes = FlexiCubes(device=device)
+
     def to(self, *args, **kwargs):
         super().to(*args, **kwargs)
         self.alphas = self.alphas.to(*args, **kwargs)
         self.betas = self.betas.to(*args, **kwargs)
         self.gammas = self.gammas.to(*args, **kwargs)
+        self.x_nx3 = self.x_nx3.to(*args, **kwargs)
+        self.cube_fx8 = self.cube_fx8.to(*args, **kwargs)
 
-        # TODO: Need to change Flexicubes device.
-        # Maybe we should copy flexicubes code to our codebase and implement cuda() and to() as functions of this class
-        # or we initialise Flexicubes anew, since we have the weights already.
+        self.feat_coordmlps = self.feat_coordmlps.to(*args, **kwargs)
+        self.sdf_coordmlps = self.sdf_coordmlps.to(*args, **kwargs)
+
+        # if kwargs["device"]:
+        #     self.create_new_flexicubes(device=kwargs["device"])
+        # else:
+        #     self.create_new_flexicubes(device=args[0])
 
     def cuda(self, *args, **kwargs):
         super().cuda(*args, **kwargs)
-        self.alphas.cuda(*args, **kwargs)
-        self.betas.cuda(*args, **kwargs)
-        self.gammas.cuda(*args, **kwargs)
-        # TODO: Need to change Flexicubes device
+        self.alphas = self.alphas.cuda(*args, **kwargs)
+        self.betas = self.betas.cuda(*args, **kwargs)
+        self.gammas = self.gammas.cuda(*args, **kwargs)
+        self.x_nx3 = self.x_nx3.cuda(*args, **kwargs)
+        self.cube_fx8 = self.cube_fx8.cuda(*args, **kwargs)
+
+        self.feat_coordmlps = self.feat_coordmlps.cuda(*args, **kwargs)
+        self.sdf_coordmlps = self.sdf_coordmlps.cuda(*args, **kwargs)
+
+        # self.create_new_flexicubes(device="cuda")
 
     def eval(self, *args, **kwargs):
         super().eval(*args, **kwargs)
@@ -185,6 +206,7 @@ class Flexicubes(Meshes):
         require_feats_grad=None,
         require_weights_grad=None,
     ):
+        # This part of the code is heavily inspired by the update_dmtet() function in DMTet_x_Gausians 
         if require_grad is None:
             require_grad = self.verts_requires_grad
         if require_feats_grad is None:
