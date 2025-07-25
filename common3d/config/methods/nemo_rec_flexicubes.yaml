@@ -31,11 +31,6 @@ objects3d:
   gaussian_splat_opacity: 1
   gaussian_splat_pts3d_size_rel_to_neighbor_dist: 0.1
   geodesic_prob_sigma: 0
-  gs_opacity_requires_grad: false
-  gs_rotation_requires_grad: false
-  gs_scale: 0.07
-  gs_scale_requires_grad: false
-  gs_top_k: 4
   normalize_scale: true
   pt3d_raster_perspective_correct: false
   tet_res: 32 # 16

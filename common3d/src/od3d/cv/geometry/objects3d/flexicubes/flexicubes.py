@@ -1,13 +1,12 @@
 import torch
 import numpy as np
-import kaolin as kal
 
 from omegaconf import DictConfig
 from typing import List, Union
 
 
-from common3d.src.od3d.cv.geometry.objects3d.meshes.meshes import Meshes, RASTERIZER, FACE_BLEND_TYPE
-from common3d.src.od3d.cv.geometry.objects3d.objects3d import FEATS_DISTR, FEATS_ACTIVATION
+from od3d.cv.geometry.objects3d.meshes.meshes import Meshes, RASTERIZER, FACE_BLEND_TYPE
+from od3d.cv.geometry.objects3d.objects3d import FEATS_DISTR, FEATS_ACTIVATION
 
 
 class Flexicubes(Meshes):
@@ -17,7 +16,7 @@ class Flexicubes(Meshes):
         faces: List[torch.Tensor],
         feat_dim=128,
         objects_count=0,
-  #      feats_objects: Union[bool, torch.Tensor] = False,
+        feats_objects: Union[bool, torch.Tensor] = False,
         feat_clutter_requires_param: Union[bool, torch.Tensor] = False,
         verts_uvs: List[torch.Tensor] = None,
         verts_coarse_count: int = 150,
@@ -33,7 +32,7 @@ class Flexicubes(Meshes):
         gaussian_splat_opacity=0.7,
         gaussian_splat_pts3d_size_rel_to_neighbor_dist=0.5,
         pt3d_raster_perspective_correct=False,
-        device=None,
+        device="cuda",
         dtype=None,
         rasterizer=RASTERIZER.NVDIFFRAST,
         face_blend_type=FACE_BLEND_TYPE.SOFT_SIGMOID_NORMALIZED,
@@ -43,15 +42,8 @@ class Flexicubes(Meshes):
         face_opacity_face_sdf_gamma=1e-4,
         instance_deform_net_config: DictConfig = None,
         voxel_grid_res=16,
-  #     gs_top_k=3,
-  #     gs_scale=0.05,
-  #     gs_opacity_requires_grad=False,
-  #     gs_scale_requires_grad=False,
-  #     gs_rotation_requires_grad=False,
-  #     tet_res=16,
-  #     sdf_symmetric=True,
-  #     harmonic_functions_count=8,
-  #     init_radius=1.0,
+        sdf_symmetric=True,
+        harmonic_functions_count=8,
         **kwargs,
     ):
         super().__init__(
@@ -86,11 +78,6 @@ class Flexicubes(Meshes):
             face_opacity_face_sdf_sigma=face_opacity_face_sdf_sigma,
             face_opacity_face_sdf_gamma=face_opacity_face_sdf_gamma,
             instance_deform_net_config=instance_deform_net_config,
-   #         gs_top_k=gs_top_k,
-   #         gs_scale=gs_scale,
-   #         gs_opacity_requires_grad=gs_opacity_requires_grad,
-   #         gs_scale_requires_grad=gs_scale_requires_grad,
-   #         gs_rotation_requires_grad=gs_rotation_requires_grad,
         )
         self.sdf_coordmlps = torch.nn.ModuleList()
         self.feat_coordmlps = torch.nn.ModuleList()
@@ -143,19 +130,21 @@ class Flexicubes(Meshes):
                 ).to(device, dtype),
             )
         # init Flexicubes
+        from kaolin.non_commercial import FlexiCubes
+
         self.voxel_grid_res = voxel_grid_res
-        self.flexicubes = kal.ops.conversions.FlexiCubes(device)
+        self.flexicubes = FlexiCubes(device=device)
         # create the non-deformed voxel grid whose positions will be used to sample for FlexiCubes
-        x_nx3, cube_fx8 = self.flexicubes.construct_voxel_grid(voxel_grid_res)
-        x_nx3 *= 2 # scale up the grid so that it's larger than the target object
+        self.x_nx3, self.cube_fx8 = self.flexicubes.construct_voxel_grid(voxel_grid_res)
+        self.x_nx3 *= 2 # scale up the grid so that it's larger than the target object
         # init mesh-specific weights for Flexicubes - but separate (i.e. betas, alphas, gammas) for better unserstanding
-        self.betas = torch.zeros((cube_fx8.shape[0], 12), dtype=torch.float, device=device)
+        self.betas = torch.zeros((self.cube_fx8.shape[0], 12), dtype=torch.float, device=device)
         self.betas = torch.nn.Parameter(self.betas.clone().detach(), requires_grad=True)
 
-        self.alphas = torch.zeros((cube_fx8.shape[0], 8), dtype=torch.float, device=device)
+        self.alphas = torch.zeros((self.cube_fx8.shape[0], 8), dtype=torch.float, device=device)
         self.alphas = torch.nn.Parameter(self.alphas.clone().detach(), requires_grad=True)
 
-        self.gammas = torch.zeros((cube_fx8.shape[0], 1), dtype=torch.float, device=device)
+        self.gammas = torch.zeros((self.cube_fx8.shape[0], 1), dtype=torch.float, device=device)
         self.gammas = torch.nn.Parameter(self.gammas.clone().detach(), requires_grad=True)
 
     def set_verts_requires_grad(self, verts_requires_grad):
@@ -171,17 +160,15 @@ class Flexicubes(Meshes):
         self.gammas = self.gammas.to(*args, **kwargs)
 
         # TODO: Need to change Flexicubes device.
-        # Maybe we should copy flexicubes code or we initialise Flexicubes anew,
-        # since we have the weights already.
+        # Maybe we should copy flexicubes code to our codebase and implement cuda() and to() as functions of this class
+        # or we initialise Flexicubes anew, since we have the weights already.
 
     def cuda(self, *args, **kwargs):
         super().cuda(*args, **kwargs)
         self.alphas.cuda(*args, **kwargs)
         self.betas.cuda(*args, **kwargs)
         self.gammas.cuda(*args, **kwargs)
-        
         # TODO: Need to change Flexicubes device
-
 
     def eval(self, *args, **kwargs):
         super().eval(*args, **kwargs)
@@ -196,7 +183,136 @@ class Flexicubes(Meshes):
         dtype=None,
         require_grad=None,
         require_feats_grad=None,
+        require_weights_grad=None,
     ):
-        # Get SDF values
+        if require_grad is None:
+            require_grad = self.verts_requires_grad
+        if require_feats_grad is None:
+            require_feats_grad = require_grad
+        if require_weights_grad is None:
+            require_weights_grad = require_grad
         
-        pass
+        verts = []
+        faces = []
+        feats = []
+        if device is None:
+            device = self.device
+        if dtype is None:
+            dtype = torch.get_default_dtype()
+
+        # For each object in the scene compute a mesh with features
+        for m in range(self.meshes_count):
+
+            # Get SDF for current object with the grid points
+            sdf = self.get_sdf(self.x_nx3, m)
+
+            # Compute Vertices and Faces using flexicubes
+            _verts, _faces, v_reg_loss = self.flexicubes(
+                self.x_nx3, 
+                sdf,
+                self.cube_fx8,
+                self.voxel_grid_res,
+                beta=self.betas,
+                alpha=self.alphas,
+                gamma_f=self.gammas,
+                training=True
+            )
+
+            # Compute Features of _verts points to later compute color and material
+            _feats = self.get_feats(_verts, m)
+
+            verts.append(_verts)
+            faces.append(_faces)
+            feats.append(_feats)
+
+        factory_kwargs = {"device": device, "dtype": dtype}
+
+        self.verts_counts = [_verts.shape[0] for _verts in verts]
+        self.verts_counts_max = max(self.verts_counts)
+
+        self.meshes_count = len(verts)
+        self.verts = torch.cat([_verts for _verts in verts], dim=0).to(**factory_kwargs)
+        self.feats_objects = torch.cat([_feats for _feats in feats], dim=0).to(
+            **factory_kwargs,
+        )
+
+        self.faces = torch.cat([_faces for _faces in faces], dim=0).to(device=device)
+
+        self.faces_counts = [_faces.shape[0] for _faces in faces]
+        self.verts_counts_acc_from_0 = [0] + [
+            sum(self.verts_counts[: i + 1]) for i in range(self.meshes_count)
+        ]
+        self.faces_counts_acc_from_0 = [0] + [
+            sum(self.faces_counts[: i + 1]) for i in range(self.meshes_count)
+        ]
+
+        self.verts_count = self.verts_counts_acc_from_0[-1]
+        self.faces_counts_max = max(self.faces_counts)
+
+        self.mask_verts_not_padded = torch.ones(
+            size=[len(self), self.verts_counts_max],
+            dtype=torch.bool,
+            device=self.device,
+        )
+
+        for i in range(len(self)):
+            self.mask_verts_not_padded[i, self.verts_counts[i] :] = False
+
+        import matplotlib.pyplot as plt
+
+        color_ = plt.get_cmap("tab20", len(self))
+        self.feats_rgb_object_id = []
+        for i in range(len(self)):
+            self.feats_rgb_object_id.extend([color_(i)] * self.verts_counts[i])
+
+        self.update_verts_coarse()
+
+    def get_sdf(self, pts, object_id):
+        """
+        Args:
+            pts (torch.Tensor): BxNx3
+        Returns:
+            sdf (torch.Tensor): BxN
+        """
+
+        sdf_init = pts.detach().norm(dim=-1, keepdim=True) - self.init_radius
+        from od3d.data.batch_datatypes import OD3D_ModelData
+
+        sdf_delta = self.sdf_coordmlps[object_id](
+            OD3D_ModelData(pts3d=pts[None,]),
+        ).feat[0]
+        sdf_vals = sdf_init + sdf_delta
+        return sdf_vals
+
+    def get_feats(self, pts, object_id):
+        from od3d.data.batch_datatypes import OD3D_ModelData
+
+        feats = self.feat_coordmlps[object_id](OD3D_ModelData(pts3d=pts[None,])).feat[0]
+        return feats
+
+    def get_sdf_gradient(self, object_id):
+        num_samples = 5000
+        sample_points = (
+            torch.rand(num_samples, 3, device=self.verts.device) - 0.5
+        ) * self.tets_scale
+
+        mesh_verts = self.get_rand_jittered_mesh_verts(object_id=object_id)
+
+        rand_idx = torch.randperm(len(mesh_verts), device=mesh_verts.device)[:5000]
+        mesh_verts = mesh_verts[rand_idx]
+        sample_points = torch.cat([sample_points, mesh_verts], 0)
+        sample_points.requires_grad = True
+        y = self.get_sdf(pts=sample_points, object_id=object_id)
+        d_output = torch.ones_like(y, requires_grad=False, device=y.device)
+        try:
+            gradients = torch.autograd.grad(
+                outputs=[y],
+                inputs=sample_points,
+                grad_outputs=d_output,
+                create_graph=True,
+                retain_graph=True,
+                only_inputs=True,
+            )[0]
+        except RuntimeError:  # For validation, we have disabled gradient calculation.
+            return torch.zeros_like(sample_points)
+        return gradients

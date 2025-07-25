@@ -236,8 +236,7 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
             require_grad = self.verts_requires_grad
         if require_feats_grad is None:
             require_feats_grad = require_grad
-        # kaolin.non_commercial.FlexiCubes
-        # https://kaolin.readthedocs.io/en/latest/modules/kaolin.non_commercial.html#kaolin.non_commercial.FlexiCubes
+            
         verts = []
         faces = []
         feats = []
