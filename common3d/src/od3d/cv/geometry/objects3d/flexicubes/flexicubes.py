@@ -17,7 +17,6 @@ class Flexicubes(Meshes):
         feat_dim=128,
         objects_count=0,
         feats_objects: Union[bool, torch.Tensor] = False,
-        feats_objects_requires_param: bool = True,
         feat_clutter_requires_param: Union[bool, torch.Tensor] = False,
         verts_uvs: List[torch.Tensor] = None,
         verts_coarse_count: int = 150,
@@ -42,10 +41,10 @@ class Flexicubes(Meshes):
         face_opacity_face_sdf_sigma=1e-4,
         face_opacity_face_sdf_gamma=1e-4,
         instance_deform_net_config: DictConfig = None,
-        voxel_grid_res=16,
         sdf_symmetric=True,
         harmonic_functions_count=8,
         init_radius=1.0,
+        voxel_grid_res=16,
         **kwargs,
     ):
         super().__init__(
@@ -53,10 +52,10 @@ class Flexicubes(Meshes):
             faces=faces,
             feat_dim=feat_dim,
             objects_count=objects_count,
-            feats_objects=feats_objects,
+            feats_objects=None,
             verts_uvs=verts_uvs,
             feats_requires_grad=feats_requires_grad,
-            feats_objects_requires_param=feats_objects_requires_param,
+            feats_objects_requires_param=False,
             feat_clutter_requires_param=feat_clutter_requires_param,
             feat_clutter=feat_clutter,
             feats_distribution=feats_distribution,
@@ -252,7 +251,6 @@ class Flexicubes(Meshes):
         self.verts_counts = [_verts.shape[0] for _verts in verts]
         self.verts_counts_max = max(self.verts_counts)
 
-        self.meshes_count = len(verts)
         self.verts = torch.cat([_verts for _verts in verts], dim=0).to(**factory_kwargs)
         self.feats_objects = torch.cat([_feats for _feats in feats], dim=0).to(
             **factory_kwargs,
@@ -313,6 +311,7 @@ class Flexicubes(Meshes):
         return feats
 
     def get_sdf_gradient(self, object_id):
+        # TODO: This is only copied code!
         num_samples = 5000
         sample_points = (
             torch.rand(num_samples, 3, device=self.verts.device) - 0.5
