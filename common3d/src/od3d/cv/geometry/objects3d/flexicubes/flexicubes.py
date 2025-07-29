@@ -1,5 +1,4 @@
 import torch
-import numpy as np
 
 from omegaconf import DictConfig
 from typing import List, Union
@@ -134,13 +133,15 @@ class Flexicubes(Meshes):
                 ).to(device, dtype),
             )
         # init Flexicubes
-        from kaolin.non_commercial import FlexiCubes
+        self.create_new_flexicubes(device=device)
 
         self.voxel_grid_res = voxel_grid_res
-        self.flexicubes = FlexiCubes(device=device)
+        self.voxel_scale = 2 * self.init_radius # eqivalent of tet_scale in DMTet
+
         # create the non-deformed voxel grid whose positions will be used to sample for FlexiCubes
         self.x_nx3, self.cube_fx8 = self.flexicubes.construct_voxel_grid(voxel_grid_res)
-        self.x_nx3 *= 2 # scale up the grid so that it's larger than the target object
+        self.x_nx3 *= self.voxel_scale # scale up the grid so that it's larger than the target object
+
         # init mesh-specific weights for Flexicubes - but separate (i.e. betas, alphas, gammas) for better unserstanding
         self.betas = torch.zeros((self.cube_fx8.shape[0], 12), dtype=torch.float, device=device)
         self.betas = torch.nn.Parameter(self.betas.clone().detach(), requires_grad=True)
@@ -150,6 +151,8 @@ class Flexicubes(Meshes):
 
         self.gammas = torch.zeros((self.cube_fx8.shape[0], 1), dtype=torch.float, device=device)
         self.gammas = torch.nn.Parameter(self.gammas.clone().detach(), requires_grad=True)
+
+        self.update_flexicubes(device=device, dtype=dtype, require_grad=False)
 
     def set_verts_requires_grad(self, verts_requires_grad):
         ## Do we need this? I assume we need at least something like this, so this should be taken as reminder TODO
@@ -163,32 +166,35 @@ class Flexicubes(Meshes):
 
     def to(self, *args, **kwargs):
         super().to(*args, **kwargs)
-        self.alphas = self.alphas.to(*args, **kwargs)
-        self.betas = self.betas.to(*args, **kwargs)
-        self.gammas = self.gammas.to(*args, **kwargs)
+
+        # These should be set, since they are torch Parameters / ModuleLists:
+        # self.alphas = self.alphas.to(*args, **kwargs)
+        # self.betas = self.betas.to(*args, **kwargs)
+        # self.gammas = self.gammas.to(*args, **kwargs)
+        # self.feat_coordmlps = self.feat_coordmlps.to(*args, **kwargs)
+        # self.sdf_coordmlps = self.sdf_coordmlps.to(*args, **kwargs)
+
         self.x_nx3 = self.x_nx3.to(*args, **kwargs)
         self.cube_fx8 = self.cube_fx8.to(*args, **kwargs)
 
-        self.feat_coordmlps = self.feat_coordmlps.to(*args, **kwargs)
-        self.sdf_coordmlps = self.sdf_coordmlps.to(*args, **kwargs)
-
-        if kwargs["device"]:
-            self.create_new_flexicubes(device=kwargs["device"])
-        else:
-            self.create_new_flexicubes(device=args[0])
+        # Since self.device is set in Meshes.to(), we can use its value here
+        self.create_new_flexicubes(device=self.device)
 
     def cuda(self, *args, **kwargs):
         super().cuda(*args, **kwargs)
-        self.alphas = self.alphas.cuda(*args, **kwargs)
-        self.betas = self.betas.cuda(*args, **kwargs)
-        self.gammas = self.gammas.cuda(*args, **kwargs)
+
+        # These should be set, since they are torch Parameters / ModuleLists:
+        # self.alphas = self.alphas.cuda(*args, **kwargs)
+        # self.betas = self.betas.cuda(*args, **kwargs)
+        # self.gammas = self.gammas.cuda(*args, **kwargs)
+        # self.feat_coordmlps = self.feat_coordmlps.cuda(*args, **kwargs)
+        # self.sdf_coordmlps = self.sdf_coordmlps.cuda(*args, **kwargs)
+
         self.x_nx3 = self.x_nx3.cuda(*args, **kwargs)
         self.cube_fx8 = self.cube_fx8.cuda(*args, **kwargs)
 
-        self.feat_coordmlps = self.feat_coordmlps.cuda(*args, **kwargs)
-        self.sdf_coordmlps = self.sdf_coordmlps.cuda(*args, **kwargs)
-
-        self.create_new_flexicubes(device="cuda")
+        # Since self.device is set in Meshes.cuda(), we can use its value here
+        self.create_new_flexicubes(device=self.device)
 
     def eval(self, *args, **kwargs):
         super().eval(*args, **kwargs)
@@ -251,11 +257,29 @@ class Flexicubes(Meshes):
         self.verts_counts = [_verts.shape[0] for _verts in verts]
         self.verts_counts_max = max(self.verts_counts)
 
+        # TODO: What is feat_clutter?
+        if not self.feat_clutter_requires_param:
+            if require_feats_grad:
+                # logger.info(m)
+                # logger.info(_verts.shape)
+                _feat_clutter = self.get_feats(
+                    pts=(torch.ones_like(_verts[0:1])).detach()
+                    * (self.voxel_scale / 2.0),
+                    object_id=0,
+                )[0]
+            else:
+                with torch.no_grad():
+                    _feat_clutter = self.get_feats(
+                        pts=(torch.ones_like(_verts[0:1])).detach()
+                        * (self.voxel_scale / 2.0),
+                        object_id=0,
+                    )[0]
+            self.feat_clutter = _feat_clutter.to(**factory_kwargs)
+
         self.verts = torch.cat([_verts for _verts in verts], dim=0).to(**factory_kwargs)
         self.feats_objects = torch.cat([_feats for _feats in feats], dim=0).to(
             **factory_kwargs,
         )
-
         self.faces = torch.cat([_faces for _faces in faces], dim=0).to(device=device)
 
         self.faces_counts = [_faces.shape[0] for _faces in faces]
@@ -272,7 +296,7 @@ class Flexicubes(Meshes):
         self.mask_verts_not_padded = torch.ones(
             size=[len(self), self.verts_counts_max],
             dtype=torch.bool,
-            device=self.device,
+            device=device,
         )
 
         for i in range(len(self)):
@@ -311,13 +335,13 @@ class Flexicubes(Meshes):
         return feats
 
     def get_sdf_gradient(self, object_id):
-        # TODO: This is only copied code!
+        # TODO: This is only copied code (replaced tet_scale with voxel_scale)!
         num_samples = 5000
         sample_points = (
             torch.rand(num_samples, 3, device=self.verts.device) - 0.5
-        ) * self.tets_scale
+        ) * self.voxel_scale
 
-        mesh_verts = self.get_rand_jittered_mesh_verts(object_id=object_id)
+        mesh_verts = self.get_verts_with_mesh_id(mesh_id=object_id, clone=True)
 
         rand_idx = torch.randperm(len(mesh_verts), device=mesh_verts.device)[:5000]
         mesh_verts = mesh_verts[rand_idx]
