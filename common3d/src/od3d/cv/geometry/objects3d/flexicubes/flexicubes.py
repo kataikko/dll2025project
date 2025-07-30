@@ -132,8 +132,17 @@ class Flexicubes(Meshes):
                     embed_concat_pts=True,
                 ).to(device, dtype),
             )
+
+        if not verts_requires_grad:
+            for param in self.sdf_coordmlps.parameters():
+                param.requires_grad = False
+        if not feats_requires_grad:
+            for param in self.feat_coordmlps.parameters():
+                param.requires_grad = False
+        
         # init Flexicubes
         self.create_new_flexicubes(device=device)
+        
 
         self.voxel_grid_res = voxel_grid_res
         self.voxel_scale = 2 * self.init_radius # eqivalent of tet_scale in DMTet
@@ -151,6 +160,8 @@ class Flexicubes(Meshes):
 
         self.gammas = torch.zeros((self.cube_fx8.shape[0], 1), dtype=torch.float, device=device)
         self.gammas = torch.nn.Parameter(self.gammas.clone().detach(), requires_grad=True)
+
+        self.deform = torch.nn.Parameter(torch.zeros_like(self.x_nx3), requires_grad=True)
 
         self.update_flexicubes(device=device, dtype=dtype, require_grad=False)
 
@@ -229,24 +240,45 @@ class Flexicubes(Meshes):
 
         # For each object in the scene compute a mesh with features
         for m in range(self.meshes_count):
+            if require_grad:
+                # Get SDF for current object with the grid points
+                sdf = self.get_sdf(self.x_nx3, m)
+                grid_verts = self.x_nx3 + (2-1e-8) / (self.voxel_grid_res * 2) * torch.tanh(self.deform)
 
-            # Get SDF for current object with the grid points
-            sdf = self.get_sdf(self.x_nx3, m)
+                # Compute Vertices and Faces using flexicubes
+                _verts, _faces, v_reg_loss = self.flexicubes(
+                    grid_verts, 
+                    sdf.view(-1),
+                    self.cube_fx8,
+                    self.voxel_grid_res,
+                    beta=self.betas,
+                    alpha=self.alphas,
+                    gamma_f=self.gammas.view(-1),
+                    training=True
+                )
+            else:
+                with torch.no_grad():
+                    sdf = self.get_sdf(self.x_nx3, m)
+                    grid_verts = self.x_nx3 + (2-1e-8) / (self.voxel_grid_res * 2) * torch.tanh(self.deform)
 
-            # Compute Vertices and Faces using flexicubes
-            _verts, _faces, v_reg_loss = self.flexicubes(
-                self.x_nx3, 
-                sdf.view(-1),
-                self.cube_fx8,
-                self.voxel_grid_res,
-                beta=self.betas,
-                alpha=self.alphas,
-                gamma_f=self.gammas.view(-1),
-                training=True
-            ) # output dims: Nx3, Mx3
+                    _verts, _faces, v_reg_loss = self.flexicubes(
+                        grid_verts, 
+                        sdf.view(-1),
+                        self.cube_fx8,
+                        self.voxel_grid_res,
+                        beta=self.betas,
+                        alpha=self.alphas,
+                        gamma_f=self.gammas.view(-1),
+                        training=False
+                    )
 
             # Compute Features of _verts points to later compute color and material
-            _feats = self.get_feats(_verts, m) # output dims: NxF
+            if require_feats_grad:
+                _feats = self.get_feats(pts=_verts.detach(), object_id=m)
+            else:
+                with torch.no_grad():
+                    _feats = self.get_feats(pts=_verts.detach(), object_id=m)
+
 
             verts.append(_verts)
             faces.append(_faces)
