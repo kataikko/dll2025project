@@ -323,7 +323,7 @@ class NeMo_Rec(OD3D_Method):
 
     def test(self, dataset: OD3D_Dataset, val=False, return_results_epoch=False):
         logger.info(f"test dataset {dataset.name}")
-        self.meshes.eval()
+        self.meshes.eval() # This creates Meshes using update_verts()
 
         dataset.transform = copy.deepcopy(self.transform_test)
 

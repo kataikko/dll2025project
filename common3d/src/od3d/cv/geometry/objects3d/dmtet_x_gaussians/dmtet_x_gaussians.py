@@ -253,7 +253,7 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
                     tets_verts,
                     tets_sdfs,
                     self.tets_faces,
-                )
+                ) # Nx3, Mx3
 
             else:
                 with torch.no_grad():

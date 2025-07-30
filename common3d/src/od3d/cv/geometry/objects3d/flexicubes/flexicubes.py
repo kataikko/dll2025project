@@ -201,7 +201,7 @@ class Flexicubes(Meshes):
         self.update_verts(require_grad=False)
 
     def update_verts(self, require_grad=True):
-        self.update_flexicubes(require_grad=require_grad)  # similar in dmtet_x_gaussians.py
+        self.update_flexicubes(require_grad=require_grad) # similar in dmtet_x_gaussians.py
 
     def update_flexicubes(
         self,
@@ -243,10 +243,10 @@ class Flexicubes(Meshes):
                 alpha=self.alphas,
                 gamma_f=self.gammas.view(-1),
                 training=True
-            )
+            ) # output dims: Nx3, Mx3
 
             # Compute Features of _verts points to later compute color and material
-            _feats = self.get_feats(_verts, m)
+            _feats = self.get_feats(_verts, m) # output dims: NxF
 
             verts.append(_verts)
             faces.append(_faces)
@@ -294,7 +294,7 @@ class Flexicubes(Meshes):
         self.faces_counts_max = max(self.faces_counts)
 
         self.mask_verts_not_padded = torch.ones(
-            size=[len(self), self.verts_counts_max],
+            size=[len(self), self.verts_counts_max], # NxM -> N=#Meshes, M=max(#verts for each mesh)
             dtype=torch.bool,
             device=device,
         )
@@ -309,6 +309,7 @@ class Flexicubes(Meshes):
         for i in range(len(self)):
             self.feats_rgb_object_id.extend([color_(i)] * self.verts_counts[i])
 
+        # TODO: Maybe this is DMTet specific, we can remove? 
         self.update_verts_coarse()
 
     def get_sdf(self, pts, object_id):
