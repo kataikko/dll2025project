@@ -1,3 +1,7 @@
+import logging
+
+logger = logging.getLogger(__name__)
+
 import torch
 
 from omegaconf import DictConfig
@@ -284,6 +288,11 @@ class Flexicubes(Meshes):
             faces.append(_faces)
             feats.append(_feats)
 
+            # TODO: Remove logging
+            logger.info(f"VLOG - _verts: {_verts.shape}")
+            logger.info(f"VLOG - _faces: {_faces.shape}")
+            logger.info(f"VLOG - _feats: {_feats.shape}")
+
         factory_kwargs = {"device": device, "dtype": dtype}
 
         self.verts_counts = [_verts.shape[0] for _verts in verts]
@@ -341,7 +350,13 @@ class Flexicubes(Meshes):
         for i in range(len(self)):
             self.feats_rgb_object_id.extend([color_(i)] * self.verts_counts[i])
 
-        # TODO: Maybe this is DMTet specific, we can remove? 
+        # TODO: Remove logging
+        logger.info(f"VLOG - self.feat_clutter: {self.feat_clutter.shape}")
+        logger.info(f"VLOG - self.verts: {self.verts.shape}")
+        logger.info(f"VLOG - self.feats_objects: {self.feats_objects.shape}")
+        logger.info(f"VLOG - self.faces: {self.faces.shape}")
+        logger.info(f"VLOG - self.mask_verts_not_padded: {self.mask_verts_not_padded.shape}")
+
         self.update_verts_coarse()
 
     def get_sdf(self, pts, object_id):

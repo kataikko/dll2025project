@@ -271,7 +271,6 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
                     )
 
             if require_feats_grad:
-                # logger.info(m)
                 # logger.info(_verts.shape)
                 _feats = self.get_feats(pts=_verts.detach(), object_id=m)
             else:
@@ -281,6 +280,11 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
             verts.append(_verts)
             faces.append(_faces)
             feats.append(_feats)
+
+            # TODO: Remove logging
+            logger.info(f"VLOG - _verts: {_verts.shape}")
+            logger.info(f"VLOG - _faces: {_faces.shape}")
+            logger.info(f"VLOG - _feats: {_feats.shape}")
 
         factory_kwargs = {"device": device, "dtype": dtype}
 
@@ -339,6 +343,13 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
         self.feats_rgb_object_id = []
         for i in range(len(self)):
             self.feats_rgb_object_id.extend([color_(i)] * self.verts_counts[i])
+
+        # TODO: Remove logging
+        logger.info(f"VLOG - self.feat_clutter: {self.feat_clutter.shape}")
+        logger.info(f"VLOG - self.verts: {self.verts.shape}")
+        logger.info(f"VLOG - self.feats_objects: {self.feats_objects.shape}")
+        logger.info(f"VLOG - self.faces: {self.faces.shape}")
+        logger.info(f"VLOG - self.mask_verts_not_padded: {self.mask_verts_not_padded.shape}")
 
         self.update_verts_coarse()
         #### UPDATE MESHES x Gaussians
