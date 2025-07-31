@@ -85,6 +85,7 @@ class Flexicubes(Meshes):
         )
 
         self.init_radius = init_radius
+        self.mesh_update_jitter_scale = 0.05  # 1. / (tet_res + 1)
 
         self.sdf_coordmlps = torch.nn.ModuleList()
         self.feat_coordmlps = torch.nn.ModuleList()
@@ -288,17 +289,11 @@ class Flexicubes(Meshes):
             faces.append(_faces)
             feats.append(_feats)
 
-            # TODO: Remove logging
-            logger.info(f"VLOG - _verts: {_verts.shape}")
-            logger.info(f"VLOG - _faces: {_faces.shape}")
-            logger.info(f"VLOG - _feats: {_feats.shape}")
-
         factory_kwargs = {"device": device, "dtype": dtype}
 
         self.verts_counts = [_verts.shape[0] for _verts in verts]
         self.verts_counts_max = max(self.verts_counts)
 
-        # TODO: What is feat_clutter?
         if not self.feat_clutter_requires_param:
             if require_feats_grad:
                 # logger.info(m)
@@ -350,13 +345,6 @@ class Flexicubes(Meshes):
         for i in range(len(self)):
             self.feats_rgb_object_id.extend([color_(i)] * self.verts_counts[i])
 
-        # TODO: Remove logging
-        logger.info(f"VLOG - self.feat_clutter: {self.feat_clutter.shape}")
-        logger.info(f"VLOG - self.verts: {self.verts.shape}")
-        logger.info(f"VLOG - self.feats_objects: {self.feats_objects.shape}")
-        logger.info(f"VLOG - self.faces: {self.faces.shape}")
-        logger.info(f"VLOG - self.mask_verts_not_padded: {self.mask_verts_not_padded.shape}")
-
         self.update_verts_coarse()
 
     def get_sdf(self, pts, object_id):
@@ -381,15 +369,25 @@ class Flexicubes(Meshes):
 
         feats = self.feat_coordmlps[object_id](OD3D_ModelData(pts3d=pts[None,])).feat[0]
         return feats
+    
+    def get_rand_jittered_mesh_verts(self, object_id):
+        pts = self.get_verts_with_mesh_id(object_id, clone=True).detach()
+        if self.mesh_update_jitter_scale > 0:
+            jitter = (
+                (torch.rand_like(pts, device=pts.device) - 0.5)
+                * self.voxel_scale
+                * self.mesh_update_jitter_scale
+            )
+            pts = pts + jitter
+        return pts
 
     def get_sdf_gradient(self, object_id):
-        # TODO: This is only copied code (replaced tet_scale with voxel_scale)!
         num_samples = 5000
         sample_points = (
             torch.rand(num_samples, 3, device=self.verts.device) - 0.5
         ) * self.voxel_scale
 
-        mesh_verts = self.get_verts_with_mesh_id(mesh_id=object_id, clone=True)
+        mesh_verts = self.get_rand_jittered_mesh_verts(object_id=object_id)
 
         rand_idx = torch.randperm(len(mesh_verts), device=mesh_verts.device)[:5000]
         mesh_verts = mesh_verts[rand_idx]
@@ -409,3 +407,14 @@ class Flexicubes(Meshes):
         except RuntimeError:  # For validation, we have disabled gradient calculation.
             return torch.zeros_like(sample_points)
         return gradients
+    
+    def get_geo_sdf_reg_loss(self, objects_ids):
+        regs_losses = []
+        for object_id in objects_ids:
+            regs_losses.append(
+                (
+                    (self.get_sdf_gradient(object_id=object_id).norm(dim=-1) - 1) ** 2
+                ).mean(),
+            )
+        regs_losses = torch.stack(regs_losses)
+        return regs_losses
