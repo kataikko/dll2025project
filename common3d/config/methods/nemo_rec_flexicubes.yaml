@@ -36,7 +36,7 @@ objects3d:
   tet_res: 32 # 16
   sdf_symmetric: False # True
   harmonic_functions_count: 9 # 8 10
-  voxel_grid_res: 16
+  voxel_grid_res: 32
 
 num_noise: 5
 max_group: 512

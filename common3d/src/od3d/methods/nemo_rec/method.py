@@ -179,6 +179,7 @@ class NeMo_Rec(OD3D_Method):
                 OD3D_Metrics.REC_MASK_MSE: 1.0,
                 OD3D_Metrics.REC_MASK_DT_DOT: 1.0,
                 OD3D_Metrics.REC_RGB_PSNR: 1.0,
+                OD3D_Metrics.REC_MASK_IOU: 1.0,
             },
             visuals=[OD3D_Visuals.PRED_VS_GT_RGB],
             apply_mask_rgb_pred=False,
@@ -491,6 +492,7 @@ class NeMo_Rec(OD3D_Method):
         logger.info(f"loss {loss.item()}")
 
         results_batch["psnr"] = task_metrics.rec_rgb_psnr.detach()
+        results_batch["iou"] = task_metrics.rec_mask_iou.detach()
 
         results_batch["loss"] = loss[None,].detach()
         results_batch["loss_batch"] = loss_batch.detach()
