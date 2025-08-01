@@ -11,3 +11,21 @@
    - There are multiple coords MLPs linking to multiple "object ids" in dmtet_x_gaussian. Do we also need multiple CoordMLPs? -> just use 1
    - In dmtet_x_gaussian a specific get_sdf_gradient is used for gradient calculation. If we do everything in one forward pass, shouldnt torch be able to automatically calculate the gradient? -> we also need the get_sdf_gradient
    - Could you please explain get_sdf()? -> sphere_sdf + difference_to_sphere
+- 31.07.
+- run dmtet with resolution for comparability
+- report iou (for bicyle) to prove more stable convergence
+- poster
+	- intro
+		- introduce the problem: we want to produce meshes from images / videos
+			- visualization with some graphic (image / camera angles -> 3d mesh)
+	- when describing dmtet especially mention the problems of dmtet which (may) solve
+	- the same applies for flexicubes
+		- one figure
+	- flexicubes vs dmtet: dmtet uses the same methord as mc for vertex sampling where flexicubes uses the more advanced dmc-like approach
+	- result images of the training process
+	- conclusion
+		- mention faster convergence of flexicubes on poster
+		- focus on better geometry
+		- less smooth texture (we will frame that as an improvement)
+		- future work:
+			- resample features per run again on a pixel level instead of a vertex level
