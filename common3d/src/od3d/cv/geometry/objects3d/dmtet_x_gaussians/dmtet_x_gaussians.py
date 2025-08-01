@@ -391,7 +391,7 @@ class DMTet_x_Gaussians(Meshes_x_Gaussians):
             OD3D_ModelData(pts3d=pts[None,]),
         ).feat[0]
         sdf_vals = sdf_init + sdf_delta
-        return sdf_vals
+        return sdf_delta
 
     def get_feats(self, pts, object_id):
         from od3d.data.batch_datatypes import OD3D_ModelData
