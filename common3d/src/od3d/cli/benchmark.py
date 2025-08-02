@@ -1103,7 +1103,7 @@ def run(
         benchmark=benchmark,
         ablation=ablation,
         duplicates_keep="last",
-        state="(finished|running)",
+        state="LadeKeinenAltenSachenAlter",  # "(finished|running)",
         add_configs_default=True,
         add_configs_ablation=False,
     )
