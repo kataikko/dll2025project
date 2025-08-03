@@ -123,11 +123,37 @@
 
       #set text(size: 14pt)
       test
+
+      #figure(
+        image("images/dmtet_32_sphere.png", height: 20%),
+      )
+      #figure(
+        image("images/flex_32_sphere.png", height: 20%),
+      )
+
+      #figure(
+        image("images/flex_32_rand.png", height: 20%),
+      )
+
+      #figure(
+        image("images/dmtet_32_rand.png", height: 20%),
+      )
+
     ],
     // Bottom section - Results and Conclusion
-    content-box(height: 200mm)[Quantitative Results][
+    content-box(height: 500mm)[Quantitative Results][
       #set text(size: 16pt)
       = Results & Impact
+
+      #figure(
+        image("images/plots/val_loss.png", width: 60%),
+      )
+      #figure(
+        image("images/plots/val_iou.png", width: 60%),
+      )
+      #figure(
+        image("images/plots/val_psnr.png", width: 60%),
+      )
 
       #set text(size: 14pt)
       *Advantages over Traditional Methods:*
