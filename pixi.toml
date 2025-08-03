@@ -16,10 +16,12 @@ cwd = "common3d"
 cmd = "od3d bench run -b shapenet_nemo_rec -p local -l 0"
 cwd = "common3d"
 
-## Env for running ranking notebook
-[feature.ranking.dependencies]
+## Env for running ranking / plotting notebooks
+[feature.plotting.dependencies]
 numpy = ">=2.3.0,<3"
 ipykernel = ">=6.29.5,<7"
+seaborn = ">=0.13.2,<0.14"
+polars = ">=1.31.0,<2"
 
 ## project env for usage on kislurm cluster
 [feature.project.system-requirements]
@@ -58,6 +60,6 @@ od3d = { path = "./common3d", editable = true }
 zellij = "*"
 
 [environments]
-ranking = ["ranking"]
+plotting = ["plotting"]
 cluster = ["project", "cluster"]
 cuda = ["project"]
