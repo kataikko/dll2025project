@@ -276,6 +276,25 @@ class Flexicubes(Meshes):
                         training=False
                     )
 
+            if len(_verts) == 0:
+                # If no vertices are returned
+                # try again with shifted isosurface value
+                print(f'sdf: max={sdf.max().item()}, min={sdf.min().item()}, mean={sdf.mean().item()}')
+                iso_shift = -sdf.min() - 0.01 * (sdf.max() - sdf.min())
+                sdf += iso_shift
+                _verts, _faces, v_reg_loss = self.flexicubes(
+                    grid_verts,
+                    sdf.view(-1),
+                    self.cube_fx8,
+                    self.voxel_grid_res,
+                    beta=self.betas,
+                    alpha=self.alphas,
+                    gamma_f=self.gammas.view(-1),
+                    training=False
+                )
+                if len(_verts) == 0:
+                    raise Exception('No vertices returned from FlexiCubes for mesh {}! Recalculating failed!'.format(m))
+
             # Compute Features of _verts points to later compute color and material
             if require_feats_grad:
                 _feats = self.get_feats(pts=_verts.detach(), object_id=m)
