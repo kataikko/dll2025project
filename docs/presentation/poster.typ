@@ -124,28 +124,90 @@
   #columns(3,
   [
     #grid(
-      columns: (1fr, 1fr),
+      columns: (auto, 5em, 5em, 5em),
+      rows: (auto, 5em, 5em),
+      column-gutter: 2mm,
+      row-gutter: 2mm,
+      align: (left, center, center, center),
+      [],
       [
-        #figure(
-          image("images/shape_net_dmtet_32_sphere.png", width: 100%),
-        )
-        #figure(
-          image("images/shape_net_flex_32_rand.png", width: 100%),
-        )
-      ],[
-        #figure(
-          image("images/shape_net_flex_32_sphere.png", width: 100%),
-        )
-        #figure(
-          image("images/shape_net_dmtet_32_rand.png", width: 100%),
-        )
-      ]
+        Sphere
+      ],
+      [
+        Random
+      ],
+      [],
+      grid.cell(
+        inset: (x: 0pt, y: 2.5em),
+        [
+          DMTet
+        ]
+      ),
+      image("images/shape_net_dmtet_32_sphere.png", width: 100%),
+      image("images/shape_net_dmtet_32_rand.png", width: 100%),
+      grid.cell(
+        rowspan: 2,
+        align: center,
+        inset: (x: 0pt, y: 2.5em),
+        [
+          #image("images/shape_net_reference.png", width: 100%)
+          Reference
+        ]
+      ),
+      grid.cell(
+        inset: (x: 0pt, y: 2.5em),
+        [
+          FlexiCubes
+        ]
+      ),
+      image("images/shape_net_flex_32_sphere.png", width: 100%),
+      image("images/shape_net_flex_32_rand.png", width: 100%),
     )
     #figure(
-      image("images/plots/shape_net_val_loss.png", width: 100%),
+      image("images/plots/shape_net_val_loss.png", height: 50%),
     )
     #figure(
-      image("images/plots/shape_net_val_iou.png", width: 100%),
+      image("images/plots/shape_net_val_iou.png", height: 50%),
+    )
+    #grid(
+      columns: (auto, 5em, 5em, 5em),
+      rows: (auto, 5em, 5em),
+      column-gutter: 2mm,
+      row-gutter: 2mm,
+      align: (left, center, center, center),
+      [],
+      [
+        Sphere
+      ],
+      [
+        Random
+      ],
+      [],
+      grid.cell(
+        inset: (x: 0pt, y: 2.5em),
+        [
+          DMTet
+        ]
+      ),
+      image("images/co3d_dmtet_32_sphere.png", width: 100%),
+      image("images/co3d_dmtet_32_rand.png", width: 100%),
+      grid.cell(
+        rowspan: 2,
+        align: center,
+        inset: (x: 0pt, y: 2.5em),
+        [
+          #image("images/co3d_reference.png", width: 100%)
+          Reference
+        ]
+      ),
+      grid.cell(
+        inset: (x: 0pt, y: 2.5em),
+        [
+          FlexiCubes
+        ]
+      ),
+      image("images/co3d_flex_32_sphere.png", width: 100%),
+      image("images/co3d_flex_32_rand.png", width: 100%),
     )
     #figure(
       image("images/plots/shape_net_val_psnr.png", width: 100%),
