@@ -75,40 +75,59 @@
   )[Mesh extraction pipeline][
     #rect(width: 100%, height: 180mm, fill: rgb("#eee"), inset: 15mm)[
       #grid(
-        columns: (1fr, 1fr, 1fr, 1fr, 1fr, 1fr, 1fr),
+        columns: (1fr, .8fr, 1fr, .8fr, 1fr, .8fr, 1fr),
         align: center,
         { image("images/perspectives.png", height: 100mm); [*Photos / Video*]; linebreak(); pin(1) },
-        diagram({
-          node((0, 2), fa-arrow-right(size: 140pt), name: <arrow>)
-          node(<arrow.north>, { fa-circle-nodes(size: 70pt); linebreak(); [SDF network]; v(5mm) })
-        }),
+        [
+          #fa-circle-nodes(size: 70pt)
+          #linebreak()
+          SDF network
+          #linebreak()
+          #fa-arrow-right(size: 140pt)
+        ],
         image("images/sdf.png", height: 100mm),
-        diagram({
-          node((0, 2), fa-arrow-right(size: 140pt), name: <arrow>)
-          node(<arrow.north>, { fa-border-all(size: 70pt); linebreak(); [Mesh extraction]; v(5mm) })
-        }),
+        [
+          #fa-border-all(size: 70pt)
+          #linebreak()
+          Mesh extraction
+          #linebreak()
+          #fa-arrow-right(size: 140pt)
+        ],
         image("images/mesh.png"),
-        diagram({
-          node((0, 2), fa-arrow-right(size: 140pt), name: <arrow>)
-          node(<arrow.north>, { fa-camera(size: 70pt); linebreak(); [Render]; v(5mm) })
-        }),
+        [
+          #fa-camera(size: 70pt)
+          #linebreak()
+          Render
+          #linebreak()
+          #fa-arrow-right(size: 140pt)
+        ],
         [#image("images/render.png", height: 100mm)
-          .#pin(2)*Rendering*
+          .#pin(2) *Rendering*
         ],
       )
     ]
 
-    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for image mask similarity*], bend: -10deg, "<|-|>", stroke: 6pt)
+    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for image mask similarity*], bend: -5deg, "<|-|>", stroke: 6pt)
   ]
-
-  #content-box(height: 150mm)[Deep Marching Tetraeda][
+  #v(20mm)
+  #content-box(height: 150mm)[
+  #grid(columns: (1fr, 1fr, 1fr),
+    align(left)[Deep Marching Tetraeda],
+    align(center)[$<->$],
+    align(right)[Flexicubes],
+  )
+  ][
     #grid(columns: (1fr, 1fr, 2fr), column-gutter: 20mm, [
       #image("images/dmc_compare_mc.svg")
       @Shen_2023
       Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
       by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
       A primal mesh is created similar to marching cubes
-    ])
+    ],[
+        #image("images/dmc_compare_dc.svg")
+        some text
+    ]
+    )
 
   ]
 
