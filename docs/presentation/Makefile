@@ -11,7 +11,7 @@ createFolder:
 present: default
 	pdfpc build/presentation.pdf
 
-poster:
+poster: createFolder
 	typst compile --font-path fonts poster.typ build/poster.pdf
 
 show: poster

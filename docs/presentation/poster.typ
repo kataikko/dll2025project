@@ -1,6 +1,7 @@
 #import "@preview/fletcher:0.5.8" as fletcher: diagram, node, edge, shapes
 #import "@preview/tableau-icons:0.334.1": *
 #import "@preview/fontawesome:0.6.0": *
+#import "@preview/muchpdf:0.1.1": muchpdf
 
 // Page setup for A0 poster size (approximately matching SVG dimensions)
 #set page(width: 841mm, height: 1189mm, margin: (x: 15mm, y: 15mm))
@@ -18,7 +19,7 @@
 
 // Helper functions for layout
 #let header-box(content) = {
-  rect(width: 100%, height: 120mm, fill: ufr-blue, radius: 8pt, inset: (left: 15mm, top: 10mm))[
+  rect(width: 100%, height: 120mm, fill: ufr-blue, radius: 8pt, inset: (left: 15mm, top: 10mm, right: 15mm))[
     #content
   ]
 }
@@ -29,13 +30,10 @@
     #set text(size: 54pt, weight: "bold", fill: ufr-blue)
     #heading
   ]
-  rect(width: 100%, height: height, fill: white, stroke: light-gray + 4pt, radius: 4pt, inset: 15mm)[
-    #set text(size: 20pt)
-    #content
-  ]
+  line(length: 100%, stroke: light-gray + 5pt)
+  content
 }
 
-// Main poster content
 #page[
   // Header with title
   #grid(
@@ -48,19 +46,25 @@
   )
   #header-box[
     #set text(fill: white, size: 86pt, weight: "bold")
-    #[Mesh Extraction with FlexiCubes]
-
+    Mesh Extraction with FlexiCubes \
+   \
     #set text(size: 45pt, weight: "bold")
-    Vincent Kataikko, Birk Ramin, Julius Schmitt
-
+    #columns(2,[
+      Vincent Kataikko, Birk Ramin, Julius Schmitt
+      #colbreak()
+      #align(right)[
+        Leonhard Sommer
+      ]
+    ])
     #set text(size: 36pt, weight: "regular")
     Deep Learning Lab • Albert-Ludwigs-Universität Freiburg • Summer 2025
   ]
 
   // Abstract section
-  #content-box(height: 220mm)[Introduction][
+  #content-box(height: 200mm)[Introduction][
     = Mesh extraction pipeline
     #v(10mm)
+    #rect(width: 100%, height: 200mm, fill: white, inset: (left: 15mm, top: 10mm, right: 15mm))[
     #diagram({
       node((0, 0), image("images/perspectives.png", height: 100mm), name: <perspectives>)
       edge((0, 0), (2, 0), "-|>", stroke: 2mm)
@@ -75,7 +79,7 @@
       node((3, -.3), [
         #fa-border-all(size: 50pt)\
         #v(1mm)
-        isosurface algorithm
+        isosurface
         #v(3mm)
       ])
 
@@ -88,92 +92,91 @@
         #v(3mm)
       ])
       node((6, 0), image("images/render.png", height: 100mm), name: <render>)
-      edge((6, 0), "d,d,l,l,l,l,l,l,u", "<|-|>", stroke: 2mm)
+      edge((6, 0), "d,l,l,l,l,l,l", "<|-|>", stroke: 2mm)
       node((3.5, 1), [
         #text(size: 60pt, weight: "bold", [=])\
         optimize for similarity between photos and renderings
       ])
-    })
-  ]
-  #content-box(height: 150mm)[Method][
-    #set text(size: 16pt)
-    = Method Overview
-
-    #set text(size: 14pt)
-    *Marching Cubes (MC):*
-    - Vertices constrained to grid edges
-    - Creates "stair-step" artifacts
-    - Limited representation of sharp features
-
-    == FlexiCubes Innovation
-
-    *Flexible Dual Vertex Positioning:*
-    - Learnable interpolation weights α modify zero-crossing positions
-    - Edge weights β determine final vertex as weighted average
-    - Convex combinations guarantee stability
-
+    })]
   ]
 
   #grid(
     columns: (1fr, 1fr),
     column-gutter: 20mm,
-    content-box(height: 500mm)[Qualitative Results][
-      #set text(size: 16pt)
-      = Implementation Details
-
-      #set text(size: 14pt)
-      test
-
+    content-box(height: 150mm)[Deep Marching Tetraeda][
       #figure(
-        image("images/shape_net_dmtet_32_sphere.png", height: 20%),
-      )
-      #figure(
-        image("images/shape_net_flex_32_sphere.png", height: 20%),
-      )
+        muchpdf(read("images/teaser1.pdf", encoding: none))
+      ) @Shen_2023
 
-      #figure(
-        image("images/shape_net_flex_32_rand.png", height: 20%),
-      )
-
-      #figure(
-        image("images/shape_net_dmtet_32_rand.png", height: 20%),
-      )
 
     ],
-    // Bottom section - Results and Conclusion
-    content-box(height: 500mm)[Quantitative Results][
-      #set text(size: 16pt)
-      = Results & Impact
-
-      #figure(
-        image("images/plots/shape_net_val_loss.png", height: 30%),
-      )
-      #figure(
-        image("images/plots/shape_net_val_iou.png", height: 30%),
-      )
-      #figure(
-        image("images/plots/shape_net_val_psnr.png", height: 30%),
-      )
-      #figure(
-        image("images/plots/shape_net_test_psnr_by_init_type.png", height: 30%),
-      )
-      #figure(
-        image("images/plots/shape_net_test_iou_by_init_type.png", height: 30%),
-      )
-
-      #set text(size: 14pt)
-      *Advantages over Traditional Methods:*
-      - Stable gradient-based optimization
-      - Better preservation of sharp features
-      - Flexible topology adaptation
-      - Reduced mesh artifacts
-      - Differentiable mesh generation
-
-      *Performance Characteristics:*
-      - Maintains topological soundness
-      - Efficient GPU implementation
-      - Scalable to high-resolution grids
-      - Compatible with existing pipelines
-    ],
+    content-box(height: 150mm)[Flexicubes][
+       #image("images/mc-dc-dmc-vizualization.png")
+       Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
+       by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
+       A primal mesh is created similar to marching cubes
+       #muchpdf(read("images/dual_vertex.pdf", encoding: none))
+    ]
   )
+
+
+  #content-box(height: 500mm)[Results][
+  #columns(3,
+  [
+    #grid(
+      columns: (1fr, 1fr),
+      [
+        #figure(
+          image("images/shape_net_dmtet_32_sphere.png", width: 100%),
+        )
+        #figure(
+          image("images/shape_net_flex_32_rand.png", width: 100%),
+        )
+      ],[
+        #figure(
+          image("images/shape_net_flex_32_sphere.png", width: 100%),
+        )
+        #figure(
+          image("images/shape_net_dmtet_32_rand.png", width: 100%),
+        )
+      ]
+    )
+    #figure(
+      image("images/plots/shape_net_val_loss.png", width: 100%),
+    )
+    #figure(
+      image("images/plots/shape_net_val_iou.png", width: 100%),
+    )
+    #figure(
+      image("images/plots/shape_net_val_psnr.png", width: 100%),
+    )
+    #figure(
+      image("images/plots/shape_net_test_psnr_by_init_type.png", width: 100%),
+    )
+    #figure(
+      image("images/plots/shape_net_test_iou_by_init_type.png", width: 100%),
+    )
+  ])
+  ]
+
+  #content-box(height: auto)[Conclusion][
+    #v(10mm)
+    #set text(size: 36pt, weight: "bold", fill: ufr-blue)
+    Flexicubes is a new mesh extraction algorithm that uses both the primal and dual grid to extract meshes from SDFs.
+    It is able to extract meshes with a higher quality than DMTet, while being faster and more memory efficient.
+    It is also able to extract meshes from SDFs with a higher resolution than DMTet.
+    #v(10mm)
+    #set text(size: 24pt, weight: "regular", fill: black)
+    We are currently working on improving the performance of Flexicubes and integrating it into our pipeline.
+  ]
+  #content-box(height: auto)[References][
+    #set text(size: 24pt, weight: "regular", fill: black)
+    #bibliography(
+      "sources.bib",
+      style: "numeric",
+      entry-style: "hanging",
+      indent: 10mm,
+      spacing: 5mm
+    )
+  ]
 ]
