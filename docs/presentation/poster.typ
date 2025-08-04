@@ -125,18 +125,18 @@
       test
 
       #figure(
-        image("images/dmtet_32_sphere.png", height: 20%),
+        image("images/shape_net_dmtet_32_sphere.png", height: 20%),
       )
       #figure(
-        image("images/flex_32_sphere.png", height: 20%),
-      )
-
-      #figure(
-        image("images/flex_32_rand.png", height: 20%),
+        image("images/shape_net_flex_32_sphere.png", height: 20%),
       )
 
       #figure(
-        image("images/dmtet_32_rand.png", height: 20%),
+        image("images/shape_net_flex_32_rand.png", height: 20%),
+      )
+
+      #figure(
+        image("images/shape_net_dmtet_32_rand.png", height: 20%),
       )
 
     ],
@@ -146,13 +146,19 @@
       = Results & Impact
 
       #figure(
-        image("images/plots/val_loss.png", width: 60%),
+        image("images/plots/shape_net_val_loss.png", height: 30%),
       )
       #figure(
-        image("images/plots/val_iou.png", width: 60%),
+        image("images/plots/shape_net_val_iou.png", height: 30%),
       )
       #figure(
-        image("images/plots/val_psnr.png", width: 60%),
+        image("images/plots/shape_net_val_psnr.png", height: 30%),
+      )
+      #figure(
+        image("images/plots/shape_net_test_psnr_by_init_type.png", height: 30%),
+      )
+      #figure(
+        image("images/plots/shape_net_test_iou_by_init_type.png", height: 30%),
       )
 
       #set text(size: 14pt)
