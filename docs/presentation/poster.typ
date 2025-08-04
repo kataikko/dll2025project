@@ -34,7 +34,7 @@
   content
 }
 
-#page[
+#page(margin: (bottom: 0pt))[
   // Header with title
   #grid(
     columns: (1fr, 1fr),
@@ -231,10 +231,14 @@
     #set text(size: 24pt, weight: "regular", fill: black)
     We are currently working on improving the performance of Flexicubes and integrating it into our pipeline.
   ]
-  #content-box(height: auto)[References][
-    #set text(size: 24pt, weight: "regular", fill: black)
-    #bibliography(
-      "source.bib"
-    )
-  ]
+  #place(
+    bottom,
+    rect(
+      width: 100%, height: auto, fill: ufr-blue,
+      inset: (left: 15mm, top: 10mm, right: 15mm, bottom: 10mm),
+      radius: (top: 8pt, bottom: 0pt),
+    )[
+      #set text(size: 18pt, fill: white)
+      #bibliography("source.bib")
+    ])
 ]
