@@ -19,7 +19,7 @@
 
 // Helper functions for layout
 #let header-box(content) = {
-  rect(width: 100%, height: 120mm, fill: ufr-blue, radius: 8pt, inset: (left: 15mm, top: 10mm, right: 15mm))[
+  rect(width: 100%, height: 120mm, fill: ufr-blue, radius: 8pt, inset: (left: 15mm, top: 15mm, right: 15mm, bottom: 10mm))[
     #content
   ]
 }
@@ -61,10 +61,10 @@
   ]
 
   // Abstract section
-  #content-box(height: 200mm)[Introduction][
+  #content-box(height: auto)[Introduction][
     = Mesh extraction pipeline
     #v(10mm)
-    #rect(width: 100%, height: 200mm, fill: white, inset: (left: 15mm, top: 10mm, right: 15mm))[
+    //#rect(width: 100%, height: 200mm, fill: light-gray, inset: (left: 15mm, top: 10mm, right: 15mm))[
     #diagram({
       node((0, 0), image("images/perspectives.png", height: 100mm), name: <perspectives>)
       edge((0, 0), (2, 0), "-|>", stroke: 2mm)
@@ -93,34 +93,35 @@
       ])
       node((6, 0), image("images/render.png", height: 100mm), name: <render>)
       edge((6, 0), "d,l,l,l,l,l,l", "<|-|>", stroke: 2mm)
-      node((3.5, 1), [
+      node((3.5, 0.5), [
         #text(size: 60pt, weight: "bold", [=])\
         optimize for similarity between photos and renderings
       ])
-    })]
+    })
   ]
 
   #grid(
     columns: (1fr, 1fr),
     column-gutter: 20mm,
     content-box(height: 150mm)[Deep Marching Tetraeda][
-      #figure(
-        muchpdf(read("images/teaser1.pdf", encoding: none))
-      ) @Shen_2023
+    //  #figure(
+    //    muchpdf(read("images/teaser1.pdf", encoding: none))
+    //  ) @Shen_2023
+
+       #image("images/mc-dc-dmc-vizualization.png") @Shen_2023
+       Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
+       by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
+       A primal mesh is created similar to marching cubes
 
 
     ],
     content-box(height: 150mm)[Flexicubes][
-       #image("images/mc-dc-dmc-vizualization.png")
-       Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
-       by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
-       A primal mesh is created similar to marching cubes
        #muchpdf(read("images/dual_vertex.pdf", encoding: none)) @shen2021deepmarchingtetrahedrahybrid
     ]
   )
 
 
-  #content-box(height: 500mm)[Results][
+  #content-box(height: auto)[Results][
   #columns(3,
   [
     #grid(
@@ -163,11 +164,12 @@
       image("images/shape_net_flex_32_sphere.png", width: 100%),
       image("images/shape_net_flex_32_rand.png", width: 100%),
     )
+
     #figure(
-      image("images/plots/shape_net_val_loss.png", height: 50%),
+      image("images/plots/shape_net_val_loss.png", width: 100%),
     )
     #figure(
-      image("images/plots/shape_net_val_iou.png", height: 50%),
+      image("images/plots/shape_net_val_iou.png", width: 100%),
     )
     #grid(
       columns: (auto, 5em, 5em, 5em),
@@ -209,6 +211,7 @@
       image("images/co3d_flex_32_sphere.png", width: 100%),
       image("images/co3d_flex_32_rand.png", width: 100%),
     )
+
     #figure(
       image("images/plots/shape_net_val_psnr.png", width: 100%),
     )
@@ -221,21 +224,14 @@
   ])
   ]
 
-  #content-box(height: auto)[Conclusion][
-    #v(10mm)
-    #set text(size: 36pt, weight: "bold", fill: ufr-blue)
-    Flexicubes is a new mesh extraction algorithm that uses both the primal and dual grid to extract meshes from SDFs.
-    It is able to extract meshes with a higher quality than DMTet, while being faster and more memory efficient.
-    It is also able to extract meshes from SDFs with a higher resolution than DMTet.
-    #v(10mm)
-    #set text(size: 24pt, weight: "regular", fill: black)
-    We are currently working on improving the performance of Flexicubes and integrating it into our pipeline.
-  ]
+  //#content-box(height: auto)[Conclusion][
+  //  TODO
+  //]
   #place(
     bottom,
     rect(
       width: 100%, height: auto, fill: ufr-blue,
-      inset: (left: 15mm, top: 10mm, right: 15mm, bottom: 10mm),
+      inset: (left: 15mm, top: 15mm, right: 15mm, bottom: 15mm),
       radius: (top: 8pt, bottom: 0pt),
     )[
       #set text(size: 18pt, fill: white)
