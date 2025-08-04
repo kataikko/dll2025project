@@ -25,7 +25,7 @@
     height: 120mm,
     fill: ufr-blue,
     radius: 8pt,
-    inset: (left: 15mm, top: 15mm, right: 15mm, bottom: 10mm),
+    inset: (left: 15mm, top: 20mm, right: 15mm, bottom: 10mm),
   )[
     #content
   ]
@@ -56,7 +56,7 @@
   #header-box[
     #set text(fill: white, size: 86pt, weight: "bold")
     Mesh Extraction with FlexiCubes \
-    \
+    #v(20mm)
     #set text(size: 45pt, weight: "bold")
     #columns(2, [
       Vincent Kataikko, Birk Ramin, Julius Schmitt
