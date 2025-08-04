@@ -115,7 +115,7 @@
        Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
        by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
        A primal mesh is created similar to marching cubes
-       #muchpdf(read("images/dual_vertex.pdf", encoding: none))
+       #muchpdf(read("images/dual_vertex.pdf", encoding: none)) @shen2021deepmarchingtetrahedrahybrid
     ]
   )
 
@@ -172,11 +172,7 @@
   #content-box(height: auto)[References][
     #set text(size: 24pt, weight: "regular", fill: black)
     #bibliography(
-      "sources.bib",
-      style: "numeric",
-      entry-style: "hanging",
-      indent: 10mm,
-      spacing: 5mm
+      "source.bib"
     )
   ]
 ]
