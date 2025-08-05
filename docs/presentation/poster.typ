@@ -204,10 +204,30 @@
       image("images/co3d_flex_32_sphere.png", width: 100%),
       image("images/co3d_flex_32_rand.png", width: 100%),
     )
-    #image("images/plots/shape_net_test_iou_by_init_type.png", height: 50%)
-    #image("images/plots/shape_net_val_psnr.png", height: 50%)
-    #image("images/plots/shape_net_test_psnr_by_init_type.png", height: 50%)
-    #image("images/plots/shape_net_val_iou.png", height: 50%)
+    #figure(
+      caption: [
+        IoU at Test time (ShapeNet)
+      ],
+      image("images/plots/shape_net_test_iou_by_init_type.png", height: 40%)
+    )
+    #figure(
+      caption: [
+        IoU on Validation Set during Training (ShapeNet)
+      ],
+      image("images/plots/shape_net_val_iou.png", height: 40%)
+    )
+    #figure(
+      caption: [
+        PSNR at Test time (ShapeNet)
+      ],
+      image("images/plots/shape_net_test_psnr_by_init_type.png", height: 40%)
+    )
+    #figure(
+      caption: [
+        PSNR on Validation Set during Training (ShapeNet)
+      ],
+      image("images/plots/shape_net_val_psnr.png", height: 40%)
+    )
   ])
   ]
 
