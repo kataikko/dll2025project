@@ -114,13 +114,13 @@
   #content-box(height: 150mm)[
   #grid(columns: (1fr, 1fr, 1fr),
     align(left)[Deep Marching Tetraeda],
-    align(center)[$<->$],
+    align(center)[$<-->$],
     align(right)[Flexicubes],
   )
   ][
-    #grid(columns: (1fr, 1fr, 2fr), column-gutter: 20mm, [
+    #grid(columns: (1fr, 1fr, 2fr), align: (center, center, center), column-gutter: 20mm, [
       = Primal mesh extraction
-      #image("images/dmc_compare_mc.svg"),
+      #image("images/dmc_compare_mc.svg")
 
     ], [
       = Dual mesh extraction
@@ -128,14 +128,11 @@
       some text
     ], [
       = Primal + Dual mesh extraction
-      #image("images/dmc_compare_dmc.svg"),
+      #image("images/dmc_compare_dmc.svg")
       @Shen_2023
       Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
       by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
       A primal mesh is created similar to marching cubes
-    ],[
-        #image("images/dmc_compare_dc.svg")
-        some text
     ]
     )
   ]
@@ -144,7 +141,8 @@
   #grid(
     columns: 3,
     rows: 2,
-    gutter: 5mm,
+    column-gutter: 2mm,
+    row-gutter: 2mm,
     figure(
       grid(
         columns: (auto, 5em, 5em, 5em),
@@ -246,38 +244,17 @@
   )
   ]
 
-  //#content-box(height: auto)[Conclusion][
-  //  TODO
-  //]
-  #place(bottom, rect(
-    width: 100%,
-    height: auto,
-    fill: ufr-blue,
-    inset: (left: 15mm, top: 15mm, right: 15mm, bottom: 15mm),
-    radius: (top: 8pt, bottom: 0pt),
-  )[
-    #set text(size: 18pt, fill: white)
-    #bibliography("source.bib")
-  ])
-
-  #show table.cell.where(y: 0): strong
-  #set table(
-    stroke: (x, y) => if y == 0 {
-      (bottom: 0.7pt + black)
-    },
-    align: (x, y) => (
-      if x > 0 { center }
-      else { left }
-    )
-  )
-
-  #table(
-    columns: (1fr, 1fr, 1fr, 1fr, 1fr),
-    inset: 10pt,
-    align: horizon,
-    [], table.cell(colspan: 2)[res 32], table.cell(colspan: 2)[res 16],
-    [],[random],[sphere],[random],[sphere],
-    [dmtet],[],[],[],[],
-    [flexicubes],[],[],[],[sdasd],
-  )
+//#content-box(height: auto)[Conclusion][
+//  TODO
+//]
+#place(bottom, rect(
+  width: 100%,
+  height: auto,
+  fill: ufr-blue,
+  inset: (left: 15mm, top: 15mm, right: 15mm, bottom: 15mm),
+  radius: (top: 8pt, bottom: 0pt),
+)[
+  #set text(size: 18pt, fill: white)
+  #bibliography("source.bib")
+])
 ]
