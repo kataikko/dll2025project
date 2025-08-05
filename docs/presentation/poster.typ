@@ -3,6 +3,7 @@
 #import "@preview/fontawesome:0.6.0": *
 #import "@preview/muchpdf:0.1.1": muchpdf
 #import "@preview/pinit:0.2.2": *
+#import "@preview/wrap-it:0.1.1": *
 
 // Page setup for A0 poster size (approximately matching SVG dimensions)
 #set page(width: 841mm, height: 1189mm, margin: (x: 15mm, y: 15mm))
@@ -118,7 +119,16 @@
   )
   ][
     #grid(columns: (1fr, 1fr, 2fr), column-gutter: 20mm, [
-      #image("images/dmc_compare_mc.svg")
+      = Primal mesh extraction
+      #image("images/dmc_compare_mc.svg"),
+
+    ], [
+      = Dual mesh extraction
+      #image("images/dmc_compare_dc.svg")
+      some text
+    ], [
+      = Primal + Dual mesh extraction
+      #image("images/dmc_compare_dmc.svg"),
       @Shen_2023
       Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
       by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
@@ -260,7 +270,7 @@
       else { left }
     )
   )
-  
+
   #table(
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
     inset: 10pt,
