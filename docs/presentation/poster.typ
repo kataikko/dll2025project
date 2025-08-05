@@ -258,8 +258,8 @@
     align: (x, y) => (
       if x > 0 { center }
       else { left }
+    )
   )
-)
   
   #table(
     columns: (1fr, 1fr, 1fr, 1fr, 1fr),
