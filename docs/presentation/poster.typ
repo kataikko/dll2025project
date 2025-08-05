@@ -134,7 +134,8 @@
   #content-box(height: 500mm)[Results][
   #columns(3,
   [
-    #grid(
+    #figure(
+    grid(
       columns: (auto, 5em, 5em, 5em),
       rows: (auto, 5em, 5em),
       column-gutter: 2mm,
@@ -168,8 +169,9 @@
       ),
       image("images/shape_net_flex_32_sphere.png", width: 100%),
       image("images/shape_net_flex_32_rand.png", width: 100%),
-    )
-    #grid(
+    ))
+    #figure(
+      grid(
       columns: (auto, 5em, 5em, 5em),
       rows: (auto, 5em, 5em),
       column-gutter: 2mm,
@@ -203,30 +205,30 @@
       ),
       image("images/co3d_flex_32_sphere.png", width: 100%),
       image("images/co3d_flex_32_rand.png", width: 100%),
-    )
+    ))
     #figure(
       caption: [
         IoU at Test time (ShapeNet)
       ],
-      image("images/plots/shape_net_test_iou_by_init_type.png", height: 40%)
+      image("images/plots/shape_net_test_iou_by_init_type.svg", height: 40%)
     )
     #figure(
       caption: [
         IoU on Validation Set during Training (ShapeNet)
       ],
-      image("images/plots/shape_net_val_iou.png", height: 40%)
+      image("images/plots/shape_net_val_iou.svg", height: 40%)
     )
     #figure(
       caption: [
         PSNR at Test time (ShapeNet)
       ],
-      image("images/plots/shape_net_test_psnr_by_init_type.png", height: 40%)
+      image("images/plots/shape_net_test_psnr_by_init_type.svg", height: 40%)
     )
     #figure(
       caption: [
         PSNR on Validation Set during Training (ShapeNet)
       ],
-      image("images/plots/shape_net_val_psnr.png", height: 40%)
+      image("images/plots/shape_net_val_psnr.svg", height: 40%)
     )
   ])
   ]
