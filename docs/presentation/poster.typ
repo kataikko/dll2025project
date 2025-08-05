@@ -118,21 +118,27 @@
     align(right)[Flexicubes],
   )
   ][
-    #grid(columns: (1fr, 1fr, 2fr), align: (center, center, center), column-gutter: 20mm, [
-      = Primal mesh extraction
-      #image("images/dmc_compare_mc.svg")
-
+    #grid(columns: (1fr, 1fr, 1fr, 2fr), align: (center, center, center), column-gutter: 5mm, [
+      = Primal mesh
+      #image("images/dmc_compare_mc.svg", height: 80mm)
+      - vertices along mesh edges
     ], [
       = Dual mesh extraction
       #image("images/dmc_compare_dc.svg")
       some text
     ], [
-      = Primal + Dual mesh extraction
-      #image("images/dmc_compare_dmc.svg")
-      @Shen_2023
-      Similar to Dual Marching cubes, flexicubes uses both the dual and primal grid. It does so
-      by first sampling the SDF on the primal grid, creating interpolation weights $alpha$ along grid edges.
-      A primal mesh is created similar to marching cubes
+      = Primal + Dual mesh
+      #image("images/dmc_compare_dmc.svg", height: 80mm)
+      - vertices along mesh edges
+      - extract dual graph instead
+      - differentiable
+    ],[
+      = Flexicubes
+      #image("images/dual_vertex.svg", height: 80mm)
+      - vertices along mesh edges
+      - extract dual graph instead
+      - differentiable
+      - garuantees manifold mesh
     ]
     )
   ]
