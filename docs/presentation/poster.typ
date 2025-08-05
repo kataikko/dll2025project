@@ -134,6 +134,7 @@
   #grid(
     columns: 3,
     rows: 2,
+    gutter: 5mm,
     figure(
       grid(
         columns: (auto, 5em, 5em, 5em),
@@ -248,4 +249,25 @@
     #set text(size: 18pt, fill: white)
     #bibliography("source.bib")
   ])
+
+  #show table.cell.where(y: 0): strong
+  #set table(
+    stroke: (x, y) => if y == 0 {
+      (bottom: 0.7pt + black)
+    },
+    align: (x, y) => (
+      if x > 0 { center }
+      else { left }
+  )
+)
+  
+  #table(
+    columns: (1fr, 1fr, 1fr, 1fr, 1fr),
+    inset: 10pt,
+    align: horizon,
+    [], table.cell(colspan: 2)[res 32], table.cell(colspan: 2)[res 16],
+    [],[random],[sphere],[random],[sphere],
+    [dmtet],[],[],[],[],
+    [flexicubes],[],[],[],[sdasd],
+  )
 ]
