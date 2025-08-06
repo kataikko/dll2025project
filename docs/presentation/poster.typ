@@ -158,16 +158,14 @@
             [
               = Flexicubes
               #grid(
-                columns: (1fr, 1fr),
+                columns: (0.7fr, 1fr),
                 align: (left, left),
-                image("images/dual_vertex.svg", height: 80mm),
                 [
-                  #align(left, [
                   - differentiable and robust
                   - additional optimisable parameters
                   - garuantees 2-manifold mesh
-                  ])
-                ]
+                ],
+                image("images/dual_vertex.svg", height: 80mm)
               )
             ]
           )
@@ -176,7 +174,7 @@
       #content-box(height: auto)[
         #grid(
           columns: (1fr),
-          align(right)[Mesh Prior]
+          align(left)[Mesh Prior]
         )
         ][
         #grid(
@@ -268,7 +266,7 @@
       image("images/plots/shape_net_val_iou.svg", width: 100%)
     ),
     figure(
-      caption: [Rendered Meshes on Test Set with Reference (CO3D)],
+      caption: [Rendered Meshes on Test Set with Reference (CO3D @sommer2025common3dselfsupervisedlearning3d)],
       grid(
         columns: (auto, 5em, 5em, 5em),
         rows: (auto, 5em, 5em),
