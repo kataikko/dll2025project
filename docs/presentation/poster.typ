@@ -118,7 +118,7 @@
         #grid(columns: (2fr, 1fr, 1fr),
           align(left)[Deep Marching Tetraeda @shen2021deepmarchingtetrahedrahybrid],
           align(center)[$<-->$],
-          align(right)[Flexicubes @Shen_2023],
+          align(right)[FlexiCubes @Shen_2023],
         )
         ][
           #grid(columns: (1fr, 1fr, 1fr), 
@@ -156,7 +156,7 @@
             align: left,
             inset: (x:0pt, y:20pt),
             [
-              = Flexicubes
+              = FlexiCubes
               #grid(
                 columns: (0.7fr, 1fr),
                 align: (left, left),
