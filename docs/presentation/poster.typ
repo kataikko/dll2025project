@@ -111,7 +111,7 @@
     #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for image mask similarity*], bend: -5deg, "<|-|>", stroke: 6pt)
   ]
   #grid(
-    columns: (1.5fr, 1fr),
+    columns: (2fr, 1fr),
     column-gutter: 20mm, 
     [
       #content-box(height: auto)[
@@ -121,36 +121,54 @@
           align(right)[Flexicubes @Shen_2023],
         )
         ][
-          #grid(columns: (1fr, 1fr, 1fr), align: (center, center, center), column-gutter: 5mm, [
+          #grid(columns: (1fr, 1fr, 1fr), 
+          align: (left, left, left), 
+          column-gutter: 5mm, 
+          row-gutter: 10mm,
+          [
             = Primal mesh
             #image("images/dmc_compare_mc.svg", height: 80mm)
-            - vertices along grid edges
-            - mesh restricted
-            - cannot capture sharp features
+            #align(left,[
+              - vertices along grid edges
+              - mesh restricted
+              - cannot capture sharp features
+            ])
           ], [
             = Dual mesh extraction
             #image("images/dmc_compare_dc.svg", height: 80mm)
-            - vertices within grid cells
-            - captures sharp features
-            - difficulties usage in differential optimisation
+            #align(left, [
+              - vertices within grid cells
+              - captures sharp features
+              - difficulties differential optimisation
+            ])
           ], [
             = Primal + Dual mesh
             #image("images/dmc_compare_dmc.svg", height: 80mm)
-            - vertices within grid cells
-            - dual connectivity of mesh
-            - differentiable
+            #align(left, [
+              - vertices within grid cells
+              - dual connectivity of mesh
+              - differentiable
+            ]
+            )
           ], 
           grid.cell(
             colspan: 3,
-            align: center,
+            align: left,
             inset: (x:0pt, y:20pt),
             [
               = Flexicubes
-              #image("images/dual_vertex.svg", height: 80mm)
-              - vertices within grid cells
-              - differentiable and robust
-              - additional optimisable parameters
-              - garuantees 2-manifold mesh
+              #grid(
+                columns: (1fr, 1fr),
+                align: (left, left),
+                image("images/dual_vertex.svg", height: 80mm),
+                [
+                  #align(left, [
+                  - differentiable and robust
+                  - additional optimisable parameters
+                  - garuantees 2-manifold mesh
+                  ])
+                ]
+              )
             ]
           )
           )
@@ -161,17 +179,33 @@
           align(right)[Mesh Prior]
         )
         ][
-        #grid(columns: (1fr, 2fr, 1fr, 2fr),
-          image("images/sphere.png", width: 60%),
+        #grid(
+          columns: (1fr),
+          rows: (13em, 13em) ,
           [
-          - $"sdf"_"train"$ is initialised with random noise
-          - $"sdf" = "sdf"_"sphere" + "sdf"_"train"$
-          - SDF is trained as difference to sphere],
-          image("images/noise.png", width: 60%),
+            = Sphere @sommer2025common3dselfsupervisedlearning3d
+            #grid(
+              columns: (1fr, 1.5fr),
+              image("images/sphere.png", width: 100%),
+              [
+                - $"sdf"_"train"$ is initialised with random noise
+                - $"sdf" = "sdf"_"sphere" + "sdf"_"train"$
+                - SDF is trained as difference to sphere
+              ]
+            )
+          ],
           [
-          - $"sdf"_"train"$ is initialised with random noise
-          - $"sdf" = "sdf"_"train"$
-          - SDF is trained directly]
+            = Random
+            #grid(
+              columns: (1fr, 1.5fr),
+              image("images/noise.png", width: 100%),
+              [
+                - $"sdf"_"train"$ is initialised with random noise
+                - $"sdf" = "sdf"_"train"$
+                - SDF is trained directly
+              ]
+            )
+          ]
         )
       ]
     ]
@@ -293,7 +327,7 @@
   width: 100%,
   height: auto,
   fill: ufr-blue,
-  inset: (left: 15mm, top: 15mm, right: 15mm, bottom: 15mm),
+  inset: (left: 15mm, top: 7mm, right: 15mm, bottom: 7mm),
   radius: (top: 8pt, bottom: 0pt),
 )[
   #set text(size: 18pt, fill: white)
