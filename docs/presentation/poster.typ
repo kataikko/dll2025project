@@ -121,24 +121,28 @@
     #grid(columns: (1fr, 1fr, 1fr, 2fr), align: (center, center, center), column-gutter: 5mm, [
       = Primal mesh
       #image("images/dmc_compare_mc.svg", height: 80mm)
-      - vertices along mesh edges
+      - vertices along grid edges
+      - mesh restricted
+      - cannot capture sharp features
     ], [
       = Dual mesh extraction
       #image("images/dmc_compare_dc.svg")
-      some text
+      - vertices within grid cells
+      - captures sharp features
+      - difficulties using in differential optimisation
     ], [
       = Primal + Dual mesh
       #image("images/dmc_compare_dmc.svg", height: 80mm)
-      - vertices along mesh edges
-      - extract dual graph instead
+      - vertices within grid cells
+      - dual connectivity of mesh
       - differentiable
     ],[
       = Flexicubes
       #image("images/dual_vertex.svg", height: 80mm)
-      - vertices along mesh edges
-      - extract dual graph instead
-      - differentiable
-      - garuantees manifold mesh
+      - vertices within grid cells
+      - differentiable and robust
+      - additional optimisable parameters
+      - garuantees 2-manifold mesh
     ]
     )
   ]
