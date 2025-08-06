@@ -34,7 +34,7 @@
 
 #let content-box(heading, content, height: auto) = {
   [
-    #v(10mm)
+    #v(5mm)
     #set text(size: 54pt, weight: "bold", fill: ufr-blue)
     #heading
   ]
@@ -110,63 +110,72 @@
 
     #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for image mask similarity*], bend: -5deg, "<|-|>", stroke: 6pt)
   ]
-  #v(20mm)
-  #content-box(height: 150mm)[
-  #grid(columns: (1fr, 1fr, 1fr),
-    align(left)[Deep Marching Tetraeda @shen2021deepmarchingtetrahedrahybrid],
-    align(center)[$<-->$],
-    align(right)[Flexicubes @Shen_2023],
-  )
-  ][
-    #grid(columns: (1fr, 1fr, 1fr, 2fr), align: (center, center, center), column-gutter: 5mm, [
-      = Primal mesh
-      #image("images/dmc_compare_mc.svg", height: 80mm)
-      - vertices along grid edges
-      - mesh restricted
-      - cannot capture sharp features
-    ], [
-      = Dual mesh extraction
-      #image("images/dmc_compare_dc.svg")
-      - vertices within grid cells
-      - captures sharp features
-      - difficulties using in differential optimisation
-    ], [
-      = Primal + Dual mesh
-      #image("images/dmc_compare_dmc.svg", height: 80mm)
-      - vertices within grid cells
-      - dual connectivity of mesh
-      - differentiable
-    ],[
-      = Flexicubes
-      #image("images/dual_vertex.svg", height: 80mm)
-      - vertices within grid cells
-      - differentiable and robust
-      - additional optimisable parameters
-      - garuantees 2-manifold mesh
+  #grid(
+    columns: (1.5fr, 1fr),
+    column-gutter: 20mm, 
+    [
+      #content-box(height: auto)[
+        #grid(columns: (2fr, 1fr, 1fr),
+          align(left)[Deep Marching Tetraeda @shen2021deepmarchingtetrahedrahybrid],
+          align(center)[$<-->$],
+          align(right)[Flexicubes @Shen_2023],
+        )
+        ][
+          #grid(columns: (1fr, 1fr, 1fr), align: (center, center, center), column-gutter: 5mm, [
+            = Primal mesh
+            #image("images/dmc_compare_mc.svg", height: 80mm)
+            - vertices along grid edges
+            - mesh restricted
+            - cannot capture sharp features
+          ], [
+            = Dual mesh extraction
+            #image("images/dmc_compare_dc.svg", height: 80mm)
+            - vertices within grid cells
+            - captures sharp features
+            - difficulties usage in differential optimisation
+          ], [
+            = Primal + Dual mesh
+            #image("images/dmc_compare_dmc.svg", height: 80mm)
+            - vertices within grid cells
+            - dual connectivity of mesh
+            - differentiable
+          ], 
+          grid.cell(
+            colspan: 3,
+            align: center,
+            inset: (x:0pt, y:20pt),
+            [
+              = Flexicubes
+              #image("images/dual_vertex.svg", height: 80mm)
+              - vertices within grid cells
+              - differentiable and robust
+              - additional optimisable parameters
+              - garuantees 2-manifold mesh
+            ]
+          )
+          )
+      ]],[
+      #content-box(height: auto)[
+        #grid(
+          columns: (1fr),
+          align(right)[Mesh Prior]
+        )
+        ][
+        #grid(columns: (1fr, 2fr, 1fr, 2fr),
+          image("images/sphere.png", width: 60%),
+          [
+          - $"sdf"_"train"$ is initialised with random noise
+          - $"sdf" = "sdf"_"sphere" + "sdf"_"train"$
+          - SDF is trained as difference to sphere],
+          image("images/noise.png", width: 60%),
+          [
+          - $"sdf"_"train"$ is initialised with random noise
+          - $"sdf" = "sdf"_"train"$
+          - SDF is trained directly]
+        )
+      ]
     ]
-    )
-  ]
-
-  #content-box()[
-    #grid(columns: (1fr, 1fr, 1fr),
-      align(left)[Sphere @sommer2025common3dselfsupervisedlearning3d],
-      align(center)[$<-$ SDF Prior $->$],
-      align(right)[Random],
-    )
-  ][
-    #grid(columns: (1fr, 2fr, 1fr, 2fr),
-      image("images/sphere.png", width: 60%),
-      [
-      - $"sdf"_"train"$ is initialised with random noise
-      - $"sdf" = "sdf"_"sphere" + "sdf"_"train"$
-      - SDF is trained as difference to sphere],
-      image("images/noise.png", width: 60%),
-      [
-      - $"sdf"_"train"$ is initialised with random noise
-      - $"sdf" = "sdf"_"train"$
-      - SDF is trained directly]
-    )
-  ]
+  )
 
   #content-box(height: 500mm)[Results][
   #grid(
@@ -175,6 +184,7 @@
     column-gutter: 2mm,
     row-gutter: 2mm,
     figure(
+      caption: [Rendered Meshes on Test Set with Reference (ShapeNet)],
       grid(
         columns: (auto, 5em, 5em, 5em),
         rows: (auto, 5em, 5em),
@@ -224,6 +234,7 @@
       image("images/plots/shape_net_val_iou.svg", width: 100%)
     ),
     figure(
+      caption: [Rendered Meshes on Test Set with Reference (CO3D)],
       grid(
         columns: (auto, 5em, 5em, 5em),
         rows: (auto, 5em, 5em),
