@@ -76,17 +76,13 @@
   )[Mesh extraction pipeline][
     #rect(width: 100%, height: 180mm, fill: rgb("#eee"), inset: 15mm)[
       #grid(
-        columns: (1fr, .8fr, 1fr, .8fr, 1fr, .8fr, 1fr),
+        columns: (1fr, .8fr, 1fr, .8fr, 1fr, 0.8fr, 1fr),
         align: center,
-        { image("images/perspectives.png", height: 100mm); [*Photos / Video*]; linebreak(); pin(1) },
         [
+          #image("images/sdf.png", height: 100mm)
           #fa-circle-nodes(size: 70pt)
-          #linebreak()
-          SDF network
-          #linebreak()
-          #fa-arrow-right(size: 140pt)
+          *SDF*
         ],
-        image("images/sdf.png", height: 100mm),
         [
           #fa-border-all(size: 70pt)
           #linebreak()
@@ -102,13 +98,23 @@
           #linebreak()
           #fa-arrow-right(size: 140pt)
         ],
-        [#image("images/render.png", height: 100mm)
-          .#pin(2) *Rendering*
-        ],
+        { 
+          image("images/render.png", height: 100mm)
+          [*Rendering*]
+          pin(1)
+          linebreak()
+        },
+        [],
+        { 
+          image("images/perspectives.png", height: 100mm)
+          pin(2)
+          [*Photos / Video*]
+          linebreak()
+        },
       )
     ]
 
-    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for Mask Similarity + RGB Reconstruction + Reg.*], bend: -5deg, "<|-|>", stroke: 6pt)
+    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for Mask Similarity + RGB Reconstruction + Reg.*], bend: -40deg, "<|-|>", stroke: 6pt)
   ]
   #grid(
     columns: (2fr, 1fr),
