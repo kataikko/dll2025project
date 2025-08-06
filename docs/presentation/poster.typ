@@ -108,7 +108,7 @@
       )
     ]
 
-    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for image mask similarity*], bend: -5deg, "<|-|>", stroke: 6pt)
+    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for Mask Similarity and RGB Reconstruction + Reg.*], bend: -5deg, "<|-|>", stroke: 6pt)
   ]
   #grid(
     columns: (2fr, 1fr),
@@ -266,7 +266,7 @@
       image("images/plots/shape_net_val_iou.svg", width: 100%)
     ),
     figure(
-      caption: [Rendered Meshes on Test Set with Reference (CO3D @sommer2025common3dselfsupervisedlearning3d)],
+      caption: [Rendered Meshes on Test Set with Reference (CO3D @reizenstein21co3d)],
       grid(
         columns: (auto, 5em, 5em, 5em),
         rows: (auto, 5em, 5em),
@@ -317,10 +317,6 @@
     ),
   )
   ]
-
-//#content-box(height: auto)[Conclusion][
-//  TODO
-//]
 #place(bottom, rect(
   width: 100%,
   height: auto,
@@ -328,7 +324,7 @@
   inset: (left: 15mm, top: 7mm, right: 15mm, bottom: 7mm),
   radius: (top: 8pt, bottom: 0pt),
 )[
-  #set text(size: 18pt, fill: white)
+  #set text(size: 14pt, fill: white)
   #bibliography("source.bib")
 ])
 ]
