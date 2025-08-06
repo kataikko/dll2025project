@@ -113,9 +113,9 @@
   #v(20mm)
   #content-box(height: 150mm)[
   #grid(columns: (1fr, 1fr, 1fr),
-    align(left)[Deep Marching Tetraeda],
+    align(left)[Deep Marching Tetraeda @shen2021deepmarchingtetrahedrahybrid],
     align(center)[$<-->$],
-    align(right)[Flexicubes],
+    align(right)[Flexicubes @Shen_2023],
   )
   ][
     #grid(columns: (1fr, 1fr, 1fr, 2fr), align: (center, center, center), column-gutter: 5mm, [
@@ -144,6 +144,27 @@
       - additional optimisable parameters
       - garuantees 2-manifold mesh
     ]
+    )
+  ]
+
+  #content-box()[
+    #grid(columns: (1fr, 1fr, 1fr),
+      align(left)[Sphere @sommer2025common3dselfsupervisedlearning3d],
+      align(center)[$<-$ SDF Prior $->$],
+      align(right)[Random],
+    )
+  ][
+    #grid(columns: (1fr, 1fr, 1fr, 1fr),
+      [image],
+      [
+      - $"sdf"_"train"$ is initialised with random noise
+      - $"sdf" = "sdf"_"sphere" + "sdf"_"train"$
+      - SDF is trained as difference to sphere],
+      [image],
+      [
+      - $"sdf"_"train"$ is initialised with random noise
+      - $"sdf" = "sdf"_"train"$
+      - SDF is trained directly]
     )
   ]
 
