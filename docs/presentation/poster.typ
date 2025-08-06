@@ -108,7 +108,7 @@
       )
     ]
 
-    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for Mask Similarity and RGB Reconstruction + Reg.*], bend: -5deg, "<|-|>", stroke: 6pt)
+    #pinit-fletcher-edge(fletcher, 1, end: 2, (1, 0), [*Optimize for Mask Similarity + RGB Reconstruction + Reg.*], bend: -5deg, "<|-|>", stroke: 6pt)
   ]
   #grid(
     columns: (2fr, 1fr),
