@@ -154,13 +154,13 @@
       align(right)[Random],
     )
   ][
-    #grid(columns: (1fr, 1fr, 1fr, 1fr),
-      [image],
+    #grid(columns: (1fr, 2fr, 1fr, 2fr),
+      image("images/sphere.png", width: 60%),
       [
       - $"sdf"_"train"$ is initialised with random noise
       - $"sdf" = "sdf"_"sphere" + "sdf"_"train"$
       - SDF is trained as difference to sphere],
-      [image],
+      image("images/noise.png", width: 60%),
       [
       - $"sdf"_"train"$ is initialised with random noise
       - $"sdf" = "sdf"_"train"$
