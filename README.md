@@ -1,6 +1,8 @@
 # dll2025project
 Project directory for the Deep Learning Lab
 
+This project's codebase came from [Common3d](https://github.com/GenIntel/common3d), which was further modified by us.
+
 ## Pixi
 
 !! Usage only on cluster !!
